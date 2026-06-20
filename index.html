@@ -1,0 +1,588 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+<meta name="apple-mobile-web-app-capable" content="yes" />
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+<meta name="apple-mobile-web-app-title" content="Pools" />
+<title>Pools — Fun Spending Tracker</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600&display=swap');
+
+  * { box-sizing: border-box; }
+  html, body { margin: 0; padding: 0; }
+  .cp-root, .cp-root * { box-sizing: border-box; }
+  .cp-root {
+    min-height: 100vh;
+    background: #F1F5F3;
+    font-family: 'Inter', system-ui, sans-serif;
+    color: #16322E;
+  }
+  .cp-shell { max-width: 460px; margin: 0 auto; padding: 24px 18px calc(env(safe-area-inset-bottom, 0px) + 60px); }
+  .cp-loading { font-family: 'Inter', sans-serif; color: #2F6F6B; font-size: 15px; }
+
+  .cp-header { display: flex; align-items: flex-start; justify-content: space-between; margin-bottom: 18px; }
+  .cp-eyebrow { font-size: 11px; letter-spacing: 0.12em; text-transform: uppercase; color: #5BAFA6; font-weight: 600; margin-bottom: 2px; }
+  .cp-title { font-family: 'Space Grotesk', sans-serif; font-size: 28px; font-weight: 700; margin: 0; line-height: 1; }
+
+  .cp-icon-btn { background: #fff; border: 1px solid #DCE6E2; border-radius: 12px; width: 40px; height: 40px; display: flex; align-items: center; justify-content: center; color: #2F6F6B; cursor: pointer; }
+  .cp-icon-btn:hover { background: #EAF2EF; }
+  .cp-icon-btn-sm { background: transparent; border: none; color: #6B7C78; cursor: pointer; display: flex; align-items: center; padding: 4px; }
+  .cp-icon-btn-sm:hover { color: #16322E; }
+
+  .cp-hero { position: relative; background: #16322E; border-radius: 20px; padding: 26px 22px; overflow: hidden; margin-bottom: 16px; }
+  .cp-hero-content { position: relative; z-index: 2; }
+  .cp-hero-label { font-size: 12px; color: #9FC9C0; font-weight: 500; margin-bottom: 6px; }
+  .cp-hero-amount { font-family: 'Space Grotesk', sans-serif; font-size: 36px; font-weight: 700; color: #fff; font-variant-numeric: tabular-nums; }
+  .cp-wave { position: absolute; bottom: -4px; left: 0; width: 200%; height: 60px; z-index: 1; }
+  .cp-wave-back { fill: #1F4A45; opacity: 0.8; animation: cpWaveDrift 14s linear infinite; }
+  .cp-wave-front { fill: #2F6F6B; opacity: 0.85; animation: cpWaveDrift 9s linear infinite reverse; }
+  @keyframes cpWaveDrift { from { transform: translateX(0); } to { transform: translateX(-300px); } }
+  @media (prefers-reduced-motion: reduce) { .cp-wave-back, .cp-wave-front { animation: none; } }
+
+  .cp-actions { display: flex; gap: 10px; margin-bottom: 22px; }
+  .cp-action { flex: 1; display: flex; align-items: center; justify-content: center; gap: 7px; padding: 13px 0; border-radius: 14px; border: none; font-family: 'Inter', sans-serif; font-weight: 600; font-size: 14px; cursor: pointer; }
+  .cp-action-payday { background: #D9A441; color: #1B2B1A; }
+  .cp-action-payday:hover { background: #C7943A; }
+  .cp-action-spend { background: #fff; color: #B85C45; border: 1px solid #E3CFC8; }
+  .cp-action-spend:hover { background: #FBF1EE; }
+
+  .cp-pools { display: flex; flex-direction: column; gap: 10px; margin-bottom: 20px; }
+  .cp-pool { background: #fff; border: 1px solid #DCE6E2; border-radius: 16px; padding: 14px 16px; }
+  .cp-pool-top { display: flex; align-items: center; justify-content: space-between; margin-bottom: 4px; }
+  .cp-pool-name { display: flex; align-items: center; gap: 6px; font-weight: 600; font-size: 14.5px; }
+  .cp-pool-pct { font-size: 11.5px; color: #7A8B86; }
+  .cp-pool-balance { font-family: 'Space Grotesk', sans-serif; font-size: 22px; font-weight: 600; font-variant-numeric: tabular-nums; margin-bottom: 10px; }
+  .cp-bar-track { height: 6px; background: #EAF2EF; border-radius: 4px; overflow: hidden; }
+  .cp-bar-fill { height: 100%; border-radius: 4px; transition: width 0.4s ease; }
+
+  .cp-history-toggle { width: 100%; display: flex; align-items: center; justify-content: center; gap: 6px; background: none; border: none; color: #2F6F6B; font-weight: 600; font-size: 13.5px; padding: 10px 0; cursor: pointer; }
+  .cp-history { display: flex; flex-direction: column; gap: 2px; margin-top: 4px; }
+  .cp-tx { display: flex; align-items: center; justify-content: space-between; padding: 10px 4px; border-bottom: 1px solid #E4ECE9; }
+  .cp-tx-pool { font-size: 13.5px; font-weight: 600; }
+  .cp-tx-note { font-size: 11.5px; color: #7A8B86; }
+  .cp-tx-amount { font-family: 'Space Grotesk', sans-serif; font-weight: 600; font-variant-numeric: tabular-nums; font-size: 14px; }
+  .cp-tx-in { color: #2F6F6B; }
+  .cp-tx-out { color: #B85C45; }
+  .cp-empty { text-align: center; color: #8A9C97; font-size: 13.5px; padding: 14px 0; }
+
+  .cp-toast { position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%); background: #16322E; color: #fff; padding: 11px 18px; border-radius: 12px; font-size: 13.5px; font-weight: 500; box-shadow: 0 8px 24px rgba(0,0,0,0.18); z-index: 50; }
+  .cp-save-warning { margin-top: 14px; background: #FBEFE9; color: #944A35; border-radius: 10px; padding: 10px 12px; font-size: 12.5px; }
+
+  .cp-intro { font-size: 14px; color: #4A5C57; line-height: 1.5; margin-bottom: 18px; }
+  .cp-label { display: block; font-size: 12px; font-weight: 600; color: #4A5C57; margin: 14px 0 6px; }
+  .cp-input-money { display: flex; align-items: center; background: #fff; border: 1px solid #DCE6E2; border-radius: 12px; padding: 0 14px; }
+  .cp-input-money span { color: #7A8B86; font-weight: 600; }
+  .cp-input-money input { border: none; outline: none; padding: 12px 8px; font-size: 16px; width: 100%; font-family: 'Space Grotesk', sans-serif; font-variant-numeric: tabular-nums; background: transparent; }
+  .cp-text-input { width: 100%; border: 1px solid #DCE6E2; border-radius: 12px; padding: 12px 14px; font-size: 14px; font-family: 'Inter', sans-serif; outline: none; }
+  .cp-select { width: 100%; border: 1px solid #DCE6E2; border-radius: 12px; padding: 12px 14px; font-size: 14px; font-family: 'Inter', sans-serif; background: #fff; outline: none; }
+
+  .cp-pool-editor-list { display: flex; flex-direction: column; gap: 8px; margin-top: 10px; }
+  .cp-pool-editor-row { display: flex; align-items: center; gap: 8px; background: #fff; border: 1px solid #DCE6E2; border-radius: 12px; padding: 8px 10px; }
+  .cp-pool-name-input { flex: 1; border: none; outline: none; font-size: 14px; font-family: 'Inter', sans-serif; min-width: 0; }
+  .cp-pool-pct-input { display: flex; align-items: center; gap: 3px; flex-shrink: 0; }
+  .cp-pool-pct-input input { width: 40px; border: none; outline: none; font-size: 14px; text-align: right; font-family: 'Space Grotesk', sans-serif; }
+  .cp-pool-pct-input span { color: #7A8B86; font-size: 13px; }
+
+  .cp-add-pool { display: flex; align-items: center; gap: 6px; background: none; border: 1px dashed #B9CCC6; color: #2F6F6B; border-radius: 12px; padding: 10px 14px; font-size: 13.5px; font-weight: 600; cursor: pointer; margin-top: 10px; width: 100%; justify-content: center; }
+  .cp-add-pool:hover { background: #EAF2EF; }
+
+  .cp-total-row { margin-top: 14px; text-align: center; font-size: 13px; font-weight: 600; color: #B85C45; padding: 8px; border-radius: 10px; background: #FBF1EE; }
+  .cp-total-row.cp-total-ok { color: #2F6F6B; background: #EAF2EF; }
+
+  .cp-primary-btn { width: 100%; margin-top: 16px; padding: 14px 0; border-radius: 14px; border: none; background: #16322E; color: #fff; font-family: 'Inter', sans-serif; font-weight: 600; font-size: 15px; cursor: pointer; }
+  .cp-primary-btn:disabled { background: #C3D0CC; color: #8A9C97; cursor: not-allowed; }
+  .cp-primary-btn:not(:disabled):hover { background: #1F4A45; }
+  .cp-spend-btn { background: #B85C45; }
+  .cp-spend-btn:not(:disabled):hover { background: #A04E39; }
+
+  .cp-overlay { position: fixed; inset: 0; background: rgba(22,50,46,0.45); display: flex; align-items: flex-end; justify-content: center; z-index: 40; }
+  .cp-modal { background: #F1F5F3; width: 100%; max-width: 460px; border-radius: 20px 20px 0 0; padding: 20px 18px calc(env(safe-area-inset-bottom, 0px) + 28px); max-height: 88vh; overflow-y: auto; }
+  .cp-modal-head { display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px; }
+  .cp-modal-head h2 { font-family: 'Space Grotesk', sans-serif; font-size: 19px; margin: 0; }
+
+  .cp-danger-zone { margin-top: 20px; padding-top: 14px; border-top: 1px solid #DCE6E2; text-align: center; }
+  .cp-text-danger { background: none; border: none; color: #B85C45; font-size: 13px; cursor: pointer; }
+  .cp-confirm-row { display: flex; flex-direction: column; gap: 8px; align-items: center; font-size: 13px; color: #4A5C57; }
+  .cp-text-danger-confirm { background: #B85C45; color: #fff; border: none; border-radius: 10px; padding: 8px 16px; font-size: 13px; cursor: pointer; }
+  .cp-text-cancel { background: none; border: none; color: #6B7C78; font-size: 13px; cursor: pointer; }
+
+  @media (min-width: 480px) {
+    .cp-overlay { align-items: center; }
+    .cp-modal { border-radius: 20px; }
+  }
+</style>
+</head>
+<body>
+<div id="root"></div>
+
+<script src="https://unpkg.com/react@18/umd/react.production.min.js" crossorigin></script>
+<script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js" crossorigin></script>
+<script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+
+<script type="text/babel">
+const { useState, useEffect, useCallback } = React;
+
+const STORAGE_KEY = 'cashpools-data';
+
+const genId = () => Date.now().toString(36) + Math.random().toString(36).slice(2, 7);
+const round2 = (n) => Math.round((n + Number.EPSILON) * 100) / 100;
+
+const formatMoney = (n) => {
+  const sign = n < 0 ? '-' : '';
+  return sign + '$' + Math.abs(n).toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+};
+
+const formatDate = (iso) => {
+  const d = new Date(iso);
+  return d.toLocaleDateString('en-NZ', { day: 'numeric', month: 'short' });
+};
+
+const defaultData = () => ({
+  setupComplete: false,
+  paydayAmount: 0,
+  pools: [],
+  transactions: [],
+});
+
+const POOL_PALETTE = ['#2F6F6B', '#3E8C86', '#5BAFA6', '#7FC4B8', '#A6D8C9', '#C9E5D6'];
+
+// --- minimal inline icon set (no external icon library needed) ---
+function IconBase({ children, size = 18, ...rest }) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" {...rest}>
+      {children}
+    </svg>
+  );
+}
+function Settings(props) {
+  return <IconBase {...props}>
+    <line x1="4" y1="6" x2="20" y2="6"/><circle cx="14" cy="6" r="2"/>
+    <line x1="4" y1="12" x2="20" y2="12"/><circle cx="8" cy="12" r="2"/>
+    <line x1="4" y1="18" x2="20" y2="18"/><circle cx="16" cy="18" r="2"/>
+  </IconBase>;
+}
+function Plus(props) { return <IconBase {...props}><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></IconBase>; }
+function X(props) { return <IconBase {...props}><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></IconBase>; }
+function Coins(props) { return <IconBase {...props}><circle cx="8" cy="9" r="6"/><circle cx="16" cy="15" r="6"/></IconBase>; }
+function Droplets(props) { return <IconBase {...props}><path d="M12 2C8 7 5 11 5 15a7 7 0 0 0 14 0c0-4-3-8-7-13z"/></IconBase>; }
+function ChevronDown(props) { return <IconBase {...props}><polyline points="6 9 12 15 18 9"/></IconBase>; }
+function ChevronUp(props) { return <IconBase {...props}><polyline points="18 15 12 9 6 15"/></IconBase>; }
+function ArrowDownRight(props) { return <IconBase {...props}><line x1="7" y1="7" x2="17" y2="17"/><polyline points="17 9 17 17 9 17"/></IconBase>; }
+
+function CashPools() {
+  const [data, setData] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [saveError, setSaveError] = useState(false);
+  const [showSettings, setShowSettings] = useState(false);
+  const [showSpend, setShowSpend] = useState(false);
+  const [showHistory, setShowHistory] = useState(false);
+  const [toast, setToast] = useState(null);
+
+  useEffect(() => {
+    try {
+      const raw = localStorage.getItem(STORAGE_KEY);
+      setData(raw ? JSON.parse(raw) : defaultData());
+    } catch (e) {
+      setData(defaultData());
+    } finally {
+      setLoading(false);
+    }
+  }, []);
+
+  const persist = useCallback((next) => {
+    setData(next);
+    try {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(next));
+      setSaveError(false);
+    } catch (e) {
+      setSaveError(true);
+    }
+  }, []);
+
+  const flashToast = (msg) => {
+    setToast(msg);
+    setTimeout(() => setToast(null), 2200);
+  };
+
+  const totalBalance = data ? data.pools.reduce((s, p) => s + p.balance, 0) : 0;
+
+  const runPayday = () => {
+    if (!data.paydayAmount || data.pools.length === 0) return;
+    const now = new Date().toISOString();
+    const shares = data.pools.map((p) => round2((data.paydayAmount * p.percent) / 100));
+    const newPools = data.pools.map((p, i) => ({ ...p, balance: round2(p.balance + shares[i]) }));
+    const newTx = data.pools.map((p, i) => ({
+      id: genId(), date: now, type: 'deposit', poolId: p.id, poolName: p.name,
+      amount: shares[i], note: 'Payday',
+    }));
+    persist({ ...data, pools: newPools, transactions: [...newTx, ...data.transactions] });
+    flashToast(`Payday — ${formatMoney(data.paydayAmount)} split across your pools`);
+  };
+
+  const logSpend = ({ poolId, amount, note }) => {
+    const now = new Date().toISOString();
+    const pool = data.pools.find((p) => p.id === poolId);
+    if (!pool || !amount) return;
+    const newPools = data.pools.map((p) => (p.id === poolId ? { ...p, balance: round2(p.balance - amount) } : p));
+    const tx = {
+      id: genId(), date: now, type: 'expense', poolId, poolName: pool.name,
+      amount, note: note || '',
+    };
+    persist({ ...data, pools: newPools, transactions: [tx, ...data.transactions] });
+    setShowSpend(false);
+    flashToast(`${formatMoney(amount)} logged from ${pool.name}`);
+  };
+
+  if (loading || !data) {
+    return (
+      <div style={{ minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', background: '#F1F5F3' }}>
+        <div className="cp-loading">Loading your pools…</div>
+      </div>
+    );
+  }
+
+  if (!data.setupComplete) {
+    return <SetupScreen onComplete={(d) => persist(d)} />;
+  }
+
+  return (
+    <div className="cp-root">
+      <div className="cp-shell">
+        <header className="cp-header">
+          <div>
+            <div className="cp-eyebrow">Fun spending</div>
+            <h1 className="cp-title">Pools</h1>
+          </div>
+          <button className="cp-icon-btn" onClick={() => setShowSettings(true)} aria-label="Settings">
+            <Settings size={20} />
+          </button>
+        </header>
+
+        <div className="cp-hero">
+          <Wave />
+          <div className="cp-hero-content">
+            <div className="cp-hero-label">Total across pools</div>
+            <div className="cp-hero-amount">{formatMoney(totalBalance)}</div>
+          </div>
+        </div>
+
+        <div className="cp-actions">
+          <button className="cp-action cp-action-payday" onClick={runPayday}>
+            <Coins size={18} />
+            <span>Payday</span>
+          </button>
+          <button className="cp-action cp-action-spend" onClick={() => setShowSpend(true)}>
+            <ArrowDownRight size={18} />
+            <span>Log a spend</span>
+          </button>
+        </div>
+
+        <div className="cp-pools">
+          {data.pools.map((p, i) => {
+            const share = totalBalance > 0 ? Math.max(0, (p.balance / totalBalance) * 100) : 0;
+            return (
+              <div className="cp-pool" key={p.id}>
+                <div className="cp-pool-top">
+                  <div className="cp-pool-name">
+                    <Droplets size={15} style={{ color: POOL_PALETTE[i % POOL_PALETTE.length] }} />
+                    {p.name}
+                  </div>
+                  <div className="cp-pool-pct">{p.percent}% of payday</div>
+                </div>
+                <div className="cp-pool-balance" style={{ color: p.balance < 0 ? '#B85C45' : '#16322E' }}>
+                  {formatMoney(p.balance)}
+                </div>
+                <div className="cp-bar-track">
+                  <div
+                    className="cp-bar-fill"
+                    style={{ width: `${share}%`, background: POOL_PALETTE[i % POOL_PALETTE.length] }}
+                  />
+                </div>
+              </div>
+            );
+          })}
+        </div>
+
+        <button className="cp-history-toggle" onClick={() => setShowHistory((s) => !s)}>
+          Recent activity
+          {showHistory ? <ChevronUp size={16} /> : <ChevronDown size={16} />}
+        </button>
+
+        {showHistory && (
+          <div className="cp-history">
+            {data.transactions.length === 0 && <div className="cp-empty">Nothing logged yet.</div>}
+            {data.transactions.slice(0, 25).map((t) => (
+              <div className="cp-tx" key={t.id}>
+                <div className="cp-tx-left">
+                  <div className="cp-tx-pool">{t.poolName}</div>
+                  <div className="cp-tx-note">{t.note || (t.type === 'deposit' ? 'Payday' : 'Spend')} · {formatDate(t.date)}</div>
+                </div>
+                <div className={`cp-tx-amount ${t.type === 'deposit' ? 'cp-tx-in' : 'cp-tx-out'}`}>
+                  {t.type === 'deposit' ? '+' : '−'}{formatMoney(Math.abs(t.amount))}
+                </div>
+              </div>
+            ))}
+          </div>
+        )}
+
+        {saveError && <div className="cp-save-warning">Couldn't save — this browser may be blocking storage for this page.</div>}
+      </div>
+
+      {showSpend && (
+        <SpendModal pools={data.pools} onClose={() => setShowSpend(false)} onSubmit={logSpend} />
+      )}
+
+      {showSettings && (
+        <SettingsModal
+          data={data}
+          onClose={() => setShowSettings(false)}
+          onSave={(d) => { persist(d); setShowSettings(false); }}
+          onReset={() => { persist(defaultData()); setShowSettings(false); }}
+        />
+      )}
+
+      {toast && <div className="cp-toast">{toast}</div>}
+    </div>
+  );
+}
+
+function SetupScreen({ onComplete }) {
+  const [paydayAmount, setPaydayAmount] = useState('');
+  const [pools, setPools] = useState([
+    { id: genId(), name: '', percent: '' },
+  ]);
+
+  const total = pools.reduce((s, p) => s + (parseFloat(p.percent) || 0), 0);
+  const canSave =
+    parseFloat(paydayAmount) > 0 &&
+    pools.every((p) => p.name.trim() && parseFloat(p.percent) > 0) &&
+    Math.abs(total - 100) < 0.05;
+
+  const updatePool = (id, field, value) =>
+    setPools((ps) => ps.map((p) => (p.id === id ? { ...p, [field]: value } : p)));
+
+  const addPool = () => setPools((ps) => [...ps, { id: genId(), name: '', percent: '' }]);
+  const removePool = (id) => setPools((ps) => (ps.length > 1 ? ps.filter((p) => p.id !== id) : ps));
+
+  const save = () => {
+    if (!canSave) return;
+    onComplete({
+      setupComplete: true,
+      paydayAmount: round2(parseFloat(paydayAmount)),
+      pools: pools.map((p) => ({ id: p.id, name: p.name.trim(), percent: round2(parseFloat(p.percent)), balance: 0 })),
+      transactions: [],
+    });
+  };
+
+  return (
+    <div className="cp-root">
+      <div className="cp-shell">
+        <header className="cp-header">
+          <div>
+            <div className="cp-eyebrow">Set up</div>
+            <h1 className="cp-title">Pools</h1>
+          </div>
+        </header>
+
+        <p className="cp-intro">
+          Tell me how much lands in this account on payday, then split it across your pools. The split has to add up to 100%.
+        </p>
+
+        <label className="cp-label">Payday deposit</label>
+        <div className="cp-input-money">
+          <span>$</span>
+          <input
+            type="number" inputMode="decimal" min="0" placeholder="0.00"
+            value={paydayAmount} onChange={(e) => setPaydayAmount(e.target.value)}
+          />
+        </div>
+
+        <div className="cp-pool-editor-list">
+          {pools.map((p, i) => (
+            <div className="cp-pool-editor-row" key={p.id}>
+              <Droplets size={15} style={{ color: POOL_PALETTE[i % POOL_PALETTE.length], flexShrink: 0 }} />
+              <input
+                className="cp-pool-name-input" placeholder="Pool name"
+                value={p.name} onChange={(e) => updatePool(p.id, 'name', e.target.value)}
+              />
+              <div className="cp-pool-pct-input">
+                <input
+                  type="number" inputMode="decimal" min="0" max="100" placeholder="0"
+                  value={p.percent} onChange={(e) => updatePool(p.id, 'percent', e.target.value)}
+                />
+                <span>%</span>
+              </div>
+              <button className="cp-icon-btn-sm" onClick={() => removePool(p.id)} aria-label="Remove pool">
+                <X size={16} />
+              </button>
+            </div>
+          ))}
+        </div>
+
+        <button className="cp-add-pool" onClick={addPool}>
+          <Plus size={16} /> Add a pool
+        </button>
+
+        <div className={`cp-total-row ${Math.abs(total - 100) < 0.05 ? 'cp-total-ok' : ''}`}>
+          Total allocated: {total.toFixed(1)}%
+        </div>
+
+        <button className="cp-primary-btn" disabled={!canSave} onClick={save}>
+          Start tracking
+        </button>
+      </div>
+    </div>
+  );
+}
+
+function SpendModal({ pools, onClose, onSubmit }) {
+  const [poolId, setPoolId] = useState(pools[0]?.id || '');
+  const [amount, setAmount] = useState('');
+  const [note, setNote] = useState('');
+  const valid = poolId && parseFloat(amount) > 0;
+
+  return (
+    <div className="cp-overlay" onClick={onClose}>
+      <div className="cp-modal" onClick={(e) => e.stopPropagation()}>
+        <div className="cp-modal-head">
+          <h2>Log a spend</h2>
+          <button className="cp-icon-btn-sm" onClick={onClose}><X size={18} /></button>
+        </div>
+
+        <label className="cp-label">From pool</label>
+        <select className="cp-select" value={poolId} onChange={(e) => setPoolId(e.target.value)}>
+          {pools.map((p) => <option key={p.id} value={p.id}>{p.name}</option>)}
+        </select>
+
+        <label className="cp-label">Amount</label>
+        <div className="cp-input-money">
+          <span>$</span>
+          <input
+            type="number" inputMode="decimal" min="0" placeholder="0.00" autoFocus
+            value={amount} onChange={(e) => setAmount(e.target.value)}
+          />
+        </div>
+
+        <label className="cp-label">Note (optional)</label>
+        <input className="cp-text-input" placeholder="What was it for?" value={note} onChange={(e) => setNote(e.target.value)} />
+
+        <button
+          className="cp-primary-btn cp-spend-btn" disabled={!valid}
+          onClick={() => onSubmit({ poolId, amount: round2(parseFloat(amount)), note: note.trim() })}
+        >
+          Log spend
+        </button>
+      </div>
+    </div>
+  );
+}
+
+function SettingsModal({ data, onClose, onSave, onReset }) {
+  const [paydayAmount, setPaydayAmount] = useState(String(data.paydayAmount));
+  const [pools, setPools] = useState(data.pools.map((p) => ({ ...p, percent: String(p.percent) })));
+  const [confirmReset, setConfirmReset] = useState(false);
+
+  const total = pools.reduce((s, p) => s + (parseFloat(p.percent) || 0), 0);
+  const canSave =
+    parseFloat(paydayAmount) > 0 &&
+    pools.every((p) => p.name.trim() && parseFloat(p.percent) > 0) &&
+    Math.abs(total - 100) < 0.05;
+
+  const updatePool = (id, field, value) =>
+    setPools((ps) => ps.map((p) => (p.id === id ? { ...p, [field]: value } : p)));
+
+  const addPool = () => setPools((ps) => [...ps, { id: genId(), name: '', percent: '', balance: 0 }]);
+  const removePool = (id) => setPools((ps) => (ps.length > 1 ? ps.filter((p) => p.id !== id) : ps));
+
+  const save = () => {
+    if (!canSave) return;
+    onSave({
+      ...data,
+      paydayAmount: round2(parseFloat(paydayAmount)),
+      pools: pools.map((p) => ({
+        id: p.id, name: p.name.trim(), percent: round2(parseFloat(p.percent)), balance: p.balance ?? 0,
+      })),
+    });
+  };
+
+  return (
+    <div className="cp-overlay" onClick={onClose}>
+      <div className="cp-modal" onClick={(e) => e.stopPropagation()}>
+        <div className="cp-modal-head">
+          <h2>Settings</h2>
+          <button className="cp-icon-btn-sm" onClick={onClose}><X size={18} /></button>
+        </div>
+
+        <label className="cp-label">Payday deposit</label>
+        <div className="cp-input-money">
+          <span>$</span>
+          <input type="number" inputMode="decimal" min="0" value={paydayAmount} onChange={(e) => setPaydayAmount(e.target.value)} />
+        </div>
+
+        <div className="cp-pool-editor-list">
+          {pools.map((p, i) => (
+            <div className="cp-pool-editor-row" key={p.id}>
+              <Droplets size={15} style={{ color: POOL_PALETTE[i % POOL_PALETTE.length], flexShrink: 0 }} />
+              <input
+                className="cp-pool-name-input" placeholder="Pool name"
+                value={p.name} onChange={(e) => updatePool(p.id, 'name', e.target.value)}
+              />
+              <div className="cp-pool-pct-input">
+                <input
+                  type="number" inputMode="decimal" min="0" max="100" placeholder="0"
+                  value={p.percent} onChange={(e) => updatePool(p.id, 'percent', e.target.value)}
+                />
+                <span>%</span>
+              </div>
+              <button className="cp-icon-btn-sm" onClick={() => removePool(p.id)} aria-label="Remove pool">
+                <X size={16} />
+              </button>
+            </div>
+          ))}
+        </div>
+
+        <button className="cp-add-pool" onClick={addPool}>
+          <Plus size={16} /> Add a pool
+        </button>
+
+        <div className={`cp-total-row ${Math.abs(total - 100) < 0.05 ? 'cp-total-ok' : ''}`}>
+          Total allocated: {total.toFixed(1)}%
+        </div>
+
+        <button className="cp-primary-btn" disabled={!canSave} onClick={save}>
+          Save changes
+        </button>
+
+        <div className="cp-danger-zone">
+          {!confirmReset ? (
+            <button className="cp-text-danger" onClick={() => setConfirmReset(true)}>Start over (clears everything)</button>
+          ) : (
+            <div className="cp-confirm-row">
+              <span>Clear all pools and history?</span>
+              <button className="cp-text-danger-confirm" onClick={onReset}>Yes, clear it</button>
+              <button className="cp-text-cancel" onClick={() => setConfirmReset(false)}>Cancel</button>
+            </div>
+          )}
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function Wave() {
+  return (
+    <svg className="cp-wave" viewBox="0 0 600 80" preserveAspectRatio="none" aria-hidden="true">
+      <path className="cp-wave-back" d="M0,40 C100,80 200,0 300,40 C400,80 500,0 600,40 C700,80 800,0 900,40 L900,80 L0,80 Z" />
+      <path className="cp-wave-front" d="M0,50 C100,20 200,80 300,50 C400,20 500,80 600,50 C700,20 800,80 900,50 L900,80 L0,80 Z" />
+    </svg>
+  );
+}
+
+const root = ReactDOM.createRoot(document.getElementById('root'));
+root.render(<CashPools />);
+</script>
+</body>
+</html>
