@@ -8,302 +8,185 @@
 <meta name="apple-mobile-web-app-title" content="Cashflow" />
 <title>Cashflow — Account Pools</title>
 <style>
-  @import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600;700&display=swap');
-
+  @import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700;800&family=Inter:wght@400;500;600;700&display=swap');
   * { box-sizing: border-box; }
   html, body { margin: 0; padding: 0; }
   .cp-root, .cp-root * { box-sizing: border-box; }
-  .cp-root {
-    min-height: 100vh;
-    background: #F1F5F3;
-    font-family: 'Inter', system-ui, sans-serif;
-    color: #16322E;
-  }
-  .cp-shell { max-width: 460px; margin: 0 auto; padding: 24px 18px calc(env(safe-area-inset-bottom, 0px) + 60px); }
-  .cp-loading { font-family: 'Inter', sans-serif; color: #2F6F6B; font-size: 15px; }
-
-  .cp-header { display: flex; align-items: flex-start; justify-content: space-between; margin-bottom: 18px; gap: 12px; }
-  .cp-eyebrow { font-size: 11px; letter-spacing: 0.12em; text-transform: uppercase; color: #5BAFA6; font-weight: 700; margin-bottom: 2px; }
-  .cp-title { font-family: 'Space Grotesk', sans-serif; font-size: 32px; font-weight: 700; margin: 0; line-height: 1.05; letter-spacing: -0.03em; }
-  .cp-title-sm { font-size: 30px; }
-  .cp-title span { font-weight: 400; color: #111; }
-
-  .cp-icon-btn { background: #fff; border: 1px solid #DCE6E2; border-radius: 12px; width: 40px; height: 40px; display: flex; align-items: center; justify-content: center; color: #2F6F6B; cursor: pointer; flex-shrink: 0; }
-  .cp-icon-btn:hover { background: #EAF2EF; }
-  .cp-icon-btn-sm { background: transparent; border: none; color: #6B7C78; cursor: pointer; display: flex; align-items: center; padding: 4px; }
-  .cp-icon-btn-sm:hover { color: #16322E; }
-  .cp-back-btn { background: none; border: none; color: #2F6F6B; font-weight: 700; font-size: 13px; padding: 0 0 8px; cursor: pointer; display: inline-flex; align-items: center; gap: 4px; }
-
-  .cp-intro { font-size: 14px; color: #4A5C57; line-height: 1.55; margin: 4px 0 22px; }
-  .cp-label { display: block; font-size: 12px; font-weight: 700; color: #4A5C57; margin: 14px 0 6px; }
-
-  .cp-freq-row { display: flex; gap: 8px; }
-  .cp-freq-btn { flex: 1; padding: 13px 0; border-radius: 12px; border: 1px solid #DCE6E2; background: #fff; font-family: 'Inter', sans-serif; font-size: 14px; font-weight: 700; color: #4A5C57; cursor: pointer; box-shadow: 0 1px 2px rgba(22,50,46,0.05); }
-  .cp-freq-btn:hover { background: #EAF2EF; }
-  .cp-freq-btn.cp-freq-btn-active { background: #2F6F6B; color: #fff; border-color: #2F6F6B; }
-
-  .cp-input-money { display: flex; align-items: center; background: #fff; border: 1px solid #DCE6E2; border-radius: 12px; padding: 0 14px; }
-  .cp-input-money span { color: #7A8B86; font-weight: 700; }
-  .cp-input-money input { border: none; outline: none; padding: 12px 8px; font-size: 16px; width: 100%; font-family: 'Space Grotesk', sans-serif; font-variant-numeric: tabular-nums; background: transparent; color: #16322E; }
-  .cp-text-input { width: 100%; border: 1px solid #DCE6E2; border-radius: 12px; padding: 12px 14px; font-size: 14px; font-family: 'Inter', sans-serif; outline: none; background: #fff; color: #16322E; }
-  .cp-select { width: 100%; border: 1px solid #DCE6E2; border-radius: 12px; padding: 12px 14px; font-size: 14px; font-family: 'Inter', sans-serif; background: #fff; outline: none; color: #16322E; }
-  .cp-date-input { width: 100%; border: 1px solid #DCE6E2; border-radius: 12px; padding: 13px 14px; font-size: 15px; font-family: 'Space Grotesk', sans-serif; background: #fff; outline: none; color: #16322E; }
-
-  .cp-editor-list { display: flex; flex-direction: column; gap: 10px; margin-top: 8px; }
-  .cp-editor-card { display: flex; flex-direction: column; gap: 8px; background: #fff; border: 1px solid #DCE6E2; border-radius: 16px; padding: 12px; box-shadow: 0 1px 2px rgba(22,50,46,0.04); }
-  .cp-editor-top { display: flex; align-items: center; gap: 8px; }
-  .cp-editor-bottom { display: flex; gap: 10px; }
-  .cp-name-input { flex: 1; border: none; outline: none; font-size: 15px; font-family: 'Inter', sans-serif; min-width: 0; font-weight: 700; color: #4A5C57; background: transparent; }
-  .cp-mini-field { flex: 1; display: flex; flex-direction: column; gap: 3px; min-width: 0; }
-  .cp-mini-field-label { font-size: 10px; color: #8A9C97; font-weight: 800; text-transform: uppercase; letter-spacing: 0.04em; }
-  .cp-mini-field-box { display: flex; align-items: center; gap: 3px; background: #F6F9F7; border: 1px solid #DCE6E2; border-radius: 9px; padding: 7px 9px; }
-  .cp-mini-field-box input { border: none; outline: none; background: transparent; width: 100%; font-family: 'Space Grotesk', sans-serif; font-size: 14px; color: #16322E; min-width: 0; }
-  .cp-mini-field-box span { color: #8A9C97; font-size: 12px; flex-shrink: 0; font-weight: 700; }
-  .cp-flat-row { display: flex; align-items: center; gap: 8px; background: #fff; border: 1px solid #DCE6E2; border-radius: 12px; padding: 9px 10px; }
-  .cp-percent-box { display: flex; align-items: center; gap: 4px; flex-shrink: 0; color: #7A8B86; font-size: 12px; }
-  .cp-percent-box input { width: 42px; border: none; outline: none; font-size: 14px; text-align: right; font-family: 'Space Grotesk', sans-serif; background: transparent; color: #16322E; font-weight: 700; }
-
-  .cp-color-row { display: flex; gap: 7px; margin-top: 2px; flex-wrap: wrap; }
-  .cp-color-dot { width: 24px; height: 24px; border-radius: 999px; border: 2px solid transparent; cursor: pointer; }
-  .cp-color-dot-active { border-color: #16322E; box-shadow: 0 0 0 2px #fff inset; }
-
-  .cp-add-btn { display: flex; align-items: center; gap: 6px; background: none; border: 1px dashed #B9CCC6; color: #2F6F6B; border-radius: 14px; padding: 12px 14px; font-size: 14px; font-weight: 700; cursor: pointer; margin-top: 12px; width: 100%; justify-content: center; }
-  .cp-add-btn:hover { background: #EAF2EF; }
-  .cp-total-row { margin-top: 14px; text-align: center; font-size: 13px; font-weight: 700; color: #B85C45; padding: 10px; border-radius: 12px; background: #FBF1EE; }
-  .cp-total-row.cp-total-ok { color: #2F6F6B; background: #EAF2EF; }
-
-  .cp-primary-btn { width: 100%; margin-top: 18px; padding: 15px 0; border-radius: 14px; border: none; background: #16322E; color: #fff; font-family: 'Inter', sans-serif; font-weight: 800; font-size: 15px; cursor: pointer; }
-  .cp-primary-btn:disabled { background: #C3D0CC; color: #8A9C97; cursor: not-allowed; }
-  .cp-primary-btn:not(:disabled):hover { background: #1F4A45; }
-  .cp-spend-btn { background: #B85C45; }
-  .cp-spend-btn:not(:disabled):hover { background: #A04E39; }
-  .cp-secondary-btn { width: 100%; margin-top: 12px; padding: 13px 0; border-radius: 14px; border: 1px solid #DCE6E2; background: #fff; color: #2F6F6B; font-family: 'Inter', sans-serif; font-weight: 800; font-size: 14px; cursor: pointer; }
-
-  .cp-account-list { display: flex; flex-direction: column; gap: 16px; }
-  .cp-account-card { position: relative; border: none; text-align: left; border-radius: 20px; min-height: 154px; padding: 22px 20px; overflow: hidden; color: #fff; cursor: pointer; box-shadow: 0 1px 3px rgba(22,50,46,0.15); }
-  .cp-account-card:hover { transform: translateY(-1px); }
-  .cp-account-card-content { position: relative; z-index: 2; }
-  .cp-account-card-name { font-family: 'Space Grotesk', sans-serif; font-size: 23px; line-height: 1; font-weight: 800; margin-bottom: 12px; }
-  .cp-account-card-amount { font-family: 'Space Grotesk', sans-serif; font-size: 42px; font-weight: 800; font-variant-numeric: tabular-nums; letter-spacing: -0.04em; }
-  .cp-wave { position: absolute; bottom: -4px; left: 0; width: 200%; height: 58px; z-index: 1; }
-  .cp-wave-back { fill: rgba(91,175,166,0.36); animation: cpWaveDrift 14s linear infinite; }
-  .cp-wave-front { fill: rgba(47,111,107,0.78); animation: cpWaveDrift 9s linear infinite reverse; }
+  .cp-root { min-height: 100vh; background: linear-gradient(180deg, #FFF7E8 0%, #F7FBFF 48%, #FFF0F5 100%); font-family: 'Inter', system-ui, sans-serif; color: #172033; }
+  .cp-shell { max-width: 460px; margin: 0 auto; padding: 24px 18px calc(env(safe-area-inset-bottom, 0px) + 66px); }
+  .cp-loading { color: #2445A7; font-size: 15px; }
+  .cp-header { display: flex; align-items: flex-start; justify-content: space-between; gap: 12px; margin-bottom: 18px; }
+  .cp-eyebrow { font-size: 11px; letter-spacing: 0.14em; text-transform: uppercase; color: #FF4B93; font-weight: 800; margin-bottom: 3px; }
+  .cp-title { font-family: 'Space Grotesk', sans-serif; font-size: 30px; font-weight: 800; margin: 0; line-height: 1; letter-spacing: -0.04em; }
+  .cp-title span { color: #68728A; font-size: 20px; letter-spacing: -0.03em; }
+  .cp-icon-btn { background: #fff; border: 1px solid #F1D7E5; border-radius: 14px; width: 42px; height: 42px; display: flex; align-items: center; justify-content: center; color: #2445A7; cursor: pointer; box-shadow: 0 6px 18px rgba(64,69,112,0.08); }
+  .cp-icon-btn:hover, .cp-icon-btn-sm:hover { background: #FFF0F6; }
+  .cp-icon-btn-sm { background: transparent; border: none; color: #6A7185; cursor: pointer; display: flex; align-items: center; padding: 5px; border-radius: 10px; }
+  .cp-back-btn { display: inline-flex; align-items: center; gap: 6px; margin-bottom: 16px; border: none; background: #fff; color: #2445A7; font-weight: 800; border-radius: 999px; padding: 9px 12px; cursor: pointer; box-shadow: 0 4px 14px rgba(64,69,112,0.07); }
+  .cp-intro { font-size: 14px; color: #4F5C72; line-height: 1.5; margin: 0 0 18px; }
+  .cp-muted { font-size: 13px; color: #68728A; line-height: 1.45; }
+  .cp-hero { position: relative; border-radius: 24px; padding: 27px 22px; overflow: hidden; margin-bottom: 16px; color: #fff; box-shadow: 0 12px 30px rgba(64,69,112,0.14); }
+  .cp-hero-content { position: relative; z-index: 2; }
+  .cp-hero-label { font-size: 12px; color: rgba(255,255,255,0.78); font-weight: 700; margin-bottom: 6px; }
+  .cp-hero-amount { font-family: 'Space Grotesk', sans-serif; font-size: 41px; font-weight: 800; font-variant-numeric: tabular-nums; letter-spacing: -0.05em; }
+  .cp-hero-next { margin-top: 10px; font-size: 12px; color: rgba(255,255,255,0.82); font-weight: 700; }
+  .cp-wave { position: absolute; bottom: -4px; left: 0; width: 200%; height: 62px; z-index: 1; opacity: 0.7; }
+  .cp-wave-back { fill: rgba(255,255,255,0.20); animation: cpWaveDrift 14s linear infinite; }
+  .cp-wave-front { fill: rgba(255,255,255,0.34); animation: cpWaveDrift 9s linear infinite reverse; }
   @keyframes cpWaveDrift { from { transform: translateX(0); } to { transform: translateX(-300px); } }
   @media (prefers-reduced-motion: reduce) { .cp-wave-back, .cp-wave-front { animation: none; } }
-
-  .cp-hero { position: relative; border-radius: 20px; padding: 24px 20px; overflow: hidden; margin-bottom: 16px; color: #fff; min-height: 122px; }
-  .cp-hero-content { position: relative; z-index: 2; }
-  .cp-hero-label { font-size: 12px; color: rgba(255,255,255,0.72); font-weight: 700; margin-bottom: 6px; }
-  .cp-hero-amount { font-family: 'Space Grotesk', sans-serif; font-size: 36px; font-weight: 800; color: #fff; font-variant-numeric: tabular-nums; letter-spacing: -0.04em; }
-  .cp-hero-next { margin-top: 10px; font-size: 12px; color: rgba(255,255,255,0.85); font-weight: 700; }
-  .cp-actions { display: flex; gap: 10px; margin-bottom: 20px; }
-  .cp-action { flex: 1; display: flex; align-items: center; justify-content: center; gap: 7px; padding: 13px 0; border-radius: 14px; border: none; font-family: 'Inter', sans-serif; font-weight: 800; font-size: 14px; cursor: pointer; }
-  .cp-action-spend { background: #fff; color: #B85C45; border: 1px solid #E3CFC8; }
-  .cp-action-spend:hover { background: #FBF1EE; }
-
-  .cp-pools { display: flex; flex-direction: column; gap: 10px; margin-bottom: 22px; }
-  .cp-pool { background: #fff; border: 1px solid #DCE6E2; border-radius: 16px; padding: 14px 16px; }
-  .cp-pool-top { display: flex; align-items: center; justify-content: space-between; margin-bottom: 4px; gap: 10px; }
+  .cp-actions { display: flex; gap: 10px; margin-bottom: 22px; }
+  .cp-action { flex: 1; display: flex; align-items: center; justify-content: center; gap: 7px; padding: 14px 0; border-radius: 16px; border: none; font-weight: 800; font-size: 14px; cursor: pointer; }
+  .cp-action-spend { background: #fff; color: #E43D74; border: 1px solid #F6B8CF; box-shadow: 0 5px 16px rgba(228,61,116,0.09); }
+  .cp-action-spend:hover { background: #FFF0F6; }
+  .cp-account-list { display: flex; flex-direction: column; gap: 16px; }
+  .cp-account-card { position: relative; border: none; text-align: left; border-radius: 24px; min-height: 158px; padding: 22px 20px; overflow: hidden; color: #fff; cursor: pointer; box-shadow: 0 12px 28px rgba(64,69,112,0.15); }
+  .cp-account-card:hover { transform: translateY(-1px); }
+  .cp-account-card-content { position: relative; z-index: 2; }
+  .cp-account-card-name { font-family: 'Space Grotesk', sans-serif; font-size: 24px; line-height: 1; font-weight: 800; margin-bottom: 12px; }
+  .cp-account-card-amount { font-family: 'Space Grotesk', sans-serif; font-size: 42px; font-weight: 800; font-variant-numeric: tabular-nums; letter-spacing: -0.05em; }
+  .cp-account-card-sub { margin-top: 12px; font-size: 12px; font-weight: 800; opacity: 0.82; }
+  .cp-pools { display: flex; flex-direction: column; gap: 11px; margin-bottom: 20px; }
+  .cp-pool { background: rgba(255,255,255,0.86); border: 1px solid #F0DAE8; border-radius: 18px; padding: 15px 16px; box-shadow: 0 5px 18px rgba(64,69,112,0.06); }
+  .cp-pool-top { display: flex; align-items: center; justify-content: space-between; gap: 10px; margin-bottom: 5px; }
   .cp-pool-name { display: flex; align-items: center; gap: 7px; font-weight: 800; font-size: 14.5px; }
-  .cp-pool-pct { font-size: 11.5px; color: #7A8B86; white-space: nowrap; }
-  .cp-pool-balance { font-family: 'Space Grotesk', sans-serif; font-size: 24px; font-weight: 800; font-variant-numeric: tabular-nums; margin-bottom: 10px; }
-  .cp-bar-track { height: 6px; background: #EAF2EF; border-radius: 4px; overflow: hidden; }
-  .cp-bar-fill { height: 100%; border-radius: 4px; transition: width 0.4s ease; }
-
-  .cp-history-toggle { width: 100%; display: flex; align-items: center; justify-content: center; gap: 6px; background: none; border: none; color: #2F6F6B; font-weight: 800; font-size: 13.5px; padding: 10px 0; cursor: pointer; }
+  .cp-pool-pct { font-size: 11.5px; color: #6D7489; font-weight: 700; text-align: right; }
+  .cp-pool-balance { font-family: 'Space Grotesk', sans-serif; font-size: 23px; font-weight: 800; font-variant-numeric: tabular-nums; margin-bottom: 10px; }
+  .cp-bar-track { height: 7px; background: #F4EAF1; border-radius: 999px; overflow: hidden; }
+  .cp-bar-fill { height: 100%; border-radius: 999px; transition: width 0.4s ease; }
+  .cp-autopay-list { margin: -7px 0 20px; background: rgba(255,255,255,0.72); border: 1px solid #F0DAE8; border-radius: 16px; padding: 11px 13px; }
+  .cp-autopay-title { font-size: 12px; text-transform: uppercase; letter-spacing: 0.08em; color: #FF4B93; font-weight: 900; margin-bottom: 8px; }
+  .cp-autopay-row { display: flex; align-items: center; justify-content: space-between; gap: 10px; padding: 8px 0; border-top: 1px solid #F4EAF1; }
+  .cp-autopay-row:first-of-type { border-top: none; }
+  .cp-autopay-name { font-size: 13.5px; font-weight: 800; }
+  .cp-autopay-meta { font-size: 11.5px; color: #68728A; }
+  .cp-autopay-amount { font-family: 'Space Grotesk', sans-serif; font-weight: 800; color: #E43D74; }
+  .cp-history-toggle { width: 100%; display: flex; align-items: center; justify-content: center; gap: 6px; background: none; border: none; color: #2445A7; font-weight: 900; font-size: 13.5px; padding: 10px 0; cursor: pointer; }
   .cp-history { display: flex; flex-direction: column; gap: 2px; margin-top: 4px; }
-  .cp-tx { display: flex; align-items: center; justify-content: space-between; padding: 10px 4px; border-bottom: 1px solid #E4ECE9; gap: 10px; }
+  .cp-tx { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 11px 4px; border-bottom: 1px solid #F0DAE8; }
   .cp-tx-pool { font-size: 13.5px; font-weight: 800; }
-  .cp-tx-note { font-size: 11.5px; color: #7A8B86; }
-  .cp-tx-amount { font-family: 'Space Grotesk', sans-serif; font-weight: 800; font-variant-numeric: tabular-nums; font-size: 14px; white-space: nowrap; }
-  .cp-tx-in { color: #2F6F6B; }
-  .cp-tx-out { color: #B85C45; }
-  .cp-empty { text-align: center; color: #8A9C97; font-size: 13.5px; padding: 14px 0; }
-
-  .cp-overlay { position: fixed; inset: 0; background: rgba(22,50,46,0.45); display: flex; align-items: flex-end; justify-content: center; z-index: 40; }
-  .cp-modal { background: #F1F5F3; width: 100%; max-width: 460px; border-radius: 20px 20px 0 0; padding: 20px 18px calc(env(safe-area-inset-bottom, 0px) + 28px); max-height: 88vh; overflow-y: auto; }
+  .cp-tx-note { font-size: 11.5px; color: #68728A; }
+  .cp-tx-amount { font-family: 'Space Grotesk', sans-serif; font-weight: 800; font-variant-numeric: tabular-nums; font-size: 14px; }
+  .cp-tx-in { color: #07A77D; }
+  .cp-tx-out { color: #E43D74; }
+  .cp-empty { text-align: center; color: #8790A4; font-size: 13.5px; padding: 14px 0; }
+  .cp-toast { position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%); background: #172033; color: #fff; padding: 11px 18px; border-radius: 14px; font-size: 13.5px; font-weight: 700; box-shadow: 0 8px 24px rgba(0,0,0,0.18); z-index: 50; max-width: 90%; text-align: center; }
+  .cp-save-warning { margin-top: 14px; background: #FFF0D9; color: #925E00; border-radius: 12px; padding: 10px 12px; font-size: 12.5px; font-weight: 700; }
+  .cp-label { display: block; font-size: 12px; font-weight: 900; color: #4F5C72; margin: 14px 0 6px; }
+  .cp-input-money, .cp-mini-field-box { display: flex; align-items: center; background: #fff; border: 1px solid #F0DAE8; border-radius: 14px; padding: 0 14px; box-shadow: 0 4px 14px rgba(64,69,112,0.04); }
+  .cp-input-money span, .cp-mini-field-box span { color: #7B8194; font-weight: 900; }
+  .cp-input-money input { border: none; outline: none; padding: 13px 8px; font-size: 16px; width: 100%; font-family: 'Space Grotesk', sans-serif; font-variant-numeric: tabular-nums; background: transparent; color: #172033; font-weight: 800; }
+  .cp-text-input, .cp-select, .cp-date-input { width: 100%; border: 1px solid #F0DAE8; border-radius: 14px; padding: 13px 14px; font-size: 14px; font-family: 'Inter', sans-serif; outline: none; background: #fff; color: #172033; box-shadow: 0 4px 14px rgba(64,69,112,0.04); }
+  .cp-date-input { font-family: 'Space Grotesk', sans-serif; font-size: 15px; font-weight: 800; }
+  .cp-freq-row { display: flex; gap: 8px; }
+  .cp-freq-btn { flex: 1; padding: 11px 0; border-radius: 12px; border: 1px solid #F0DAE8; background: #fff; font-size: 13px; font-weight: 900; color: #4F5C72; cursor: pointer; }
+  .cp-freq-btn:hover { background: #FFF0F6; }
+  .cp-freq-btn.cp-freq-btn-active { background: linear-gradient(135deg, #2445A7, #FF4B93); color: #fff; border-color: transparent; }
+  .cp-editor-list { display: flex; flex-direction: column; gap: 10px; margin-top: 10px; }
+  .cp-editor-card { background: rgba(255,255,255,0.88); border: 1px solid #F0DAE8; border-radius: 18px; padding: 12px; box-shadow: 0 5px 18px rgba(64,69,112,0.05); }
+  .cp-editor-top { display: flex; align-items: center; gap: 8px; }
+  .cp-editor-bottom { display: flex; gap: 10px; margin-top: 10px; }
+  .cp-name-input { flex: 1; border: none; outline: none; font-size: 14px; font-family: 'Inter', sans-serif; min-width: 0; background: transparent; color: #172033; font-weight: 800; }
+  .cp-money-box { display: flex; align-items: center; gap: 4px; flex-shrink: 0; color: #7B8194; font-size: 12px; font-weight: 900; }
+  .cp-money-box input { width: 68px; border: none; outline: none; font-size: 14px; text-align: right; font-family: 'Space Grotesk', sans-serif; background: transparent; color: #172033; font-weight: 800; }
+  .cp-mini-field { flex: 1; display: flex; flex-direction: column; gap: 4px; }
+  .cp-mini-field-label { font-size: 10px; color: #8790A4; font-weight: 900; text-transform: uppercase; letter-spacing: 0.05em; }
+  .cp-mini-field-box { padding: 6px 9px; border-radius: 12px; background: #FFF9FC; }
+  .cp-mini-field-box input { border: none; outline: none; background: transparent; width: 100%; font-family: 'Space Grotesk', sans-serif; font-size: 13.5px; color: #172033; font-weight: 800; }
+  .cp-flat-row { display: flex; align-items: center; gap: 8px; background: #fff; border: 1px solid #F0DAE8; border-radius: 14px; padding: 9px 10px; }
+  .cp-color-row { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 11px; }
+  .cp-color-dot { width: 27px; height: 27px; border-radius: 50%; border: 3px solid #fff; box-shadow: 0 0 0 1px #E5D3E0, 0 3px 8px rgba(64,69,112,0.12); cursor: pointer; }
+  .cp-color-dot-active { box-shadow: 0 0 0 3px #FFB703, 0 3px 8px rgba(64,69,112,0.12); }
+  .cp-add-btn { display: flex; align-items: center; gap: 6px; background: #fff; border: 1px dashed #EF9FC1; color: #2445A7; border-radius: 14px; padding: 11px 14px; font-size: 13.5px; font-weight: 900; cursor: pointer; margin-top: 10px; width: 100%; justify-content: center; }
+  .cp-add-btn:hover { background: #FFF0F6; }
+  .cp-total-row { margin-top: 14px; text-align: center; font-size: 13px; font-weight: 900; color: #E43D74; padding: 9px; border-radius: 12px; background: #FFF0F6; }
+  .cp-total-row.cp-total-ok { color: #078466; background: #E8FFF6; }
+  .cp-primary-btn, .cp-secondary-btn { width: 100%; margin-top: 16px; padding: 15px 0; border-radius: 16px; border: none; font-weight: 900; font-size: 15px; cursor: pointer; }
+  .cp-primary-btn { background: linear-gradient(135deg, #2445A7, #FF4B93); color: #fff; box-shadow: 0 10px 24px rgba(255,75,147,0.18); }
+  .cp-primary-btn:disabled { background: #D9DEE8; color: #8D94A6; cursor: not-allowed; box-shadow: none; }
+  .cp-spend-btn { background: linear-gradient(135deg, #E43D74, #FF8A00); }
+  .cp-secondary-btn { background: #fff; color: #2445A7; border: 1px solid #D7DDF5; }
+  .cp-overlay { position: fixed; inset: 0; background: rgba(23,32,51,0.43); display: flex; align-items: flex-end; justify-content: center; z-index: 40; }
+  .cp-modal { background: linear-gradient(180deg, #FFF7E8 0%, #F7FBFF 55%, #FFF0F5 100%); width: 100%; max-width: 460px; border-radius: 24px 24px 0 0; padding: 20px 18px calc(env(safe-area-inset-bottom, 0px) + 28px); max-height: 88vh; overflow-y: auto; }
   .cp-modal-head { display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px; }
-  .cp-modal-head h2 { font-family: 'Space Grotesk', sans-serif; font-size: 19px; margin: 0; }
-  .cp-section-divider { margin: 20px 0 6px; padding-top: 14px; border-top: 1px solid #DCE6E2; }
-  .cp-section-title { font-size: 12px; color: #2F6F6B; font-weight: 900; margin: 18px 0 8px; }
-  .cp-muted { color: #6B7C78; font-size: 12px; line-height: 1.4; }
-
-  .cp-toast { position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%); background: #16322E; color: #fff; padding: 11px 18px; border-radius: 12px; font-size: 13.5px; font-weight: 600; box-shadow: 0 8px 24px rgba(0,0,0,0.18); z-index: 50; max-width: 90%; text-align: center; }
-  .cp-save-warning { margin-top: 14px; background: #FBEFE9; color: #944A35; border-radius: 10px; padding: 10px 12px; font-size: 12.5px; }
-  .cp-danger-zone { margin-top: 20px; padding-top: 14px; border-top: 1px solid #DCE6E2; text-align: center; }
-  .cp-text-link { background: none; border: none; color: #2F6F6B; font-size: 13px; font-weight: 700; cursor: pointer; }
-  .cp-text-danger { background: none; border: none; color: #B85C45; font-size: 12px; cursor: pointer; }
-  .cp-confirm-row { display: flex; flex-direction: column; gap: 8px; align-items: center; font-size: 13px; color: #4A5C57; }
-  .cp-text-danger-confirm { background: #B85C45; color: #fff; border: none; border-radius: 10px; padding: 8px 16px; font-size: 13px; cursor: pointer; }
-  .cp-text-cancel { background: none; border: none; color: #6B7C78; font-size: 13px; cursor: pointer; }
-
-  @media (min-width: 480px) {
-    .cp-overlay { align-items: center; }
-    .cp-modal { border-radius: 20px; }
-  }
+  .cp-modal-head h2 { font-family: 'Space Grotesk', sans-serif; font-size: 20px; margin: 0; font-weight: 800; letter-spacing: -0.03em; }
+  .cp-section-title { margin-top: 20px; font-size: 13px; color: #FF4B93; text-transform: uppercase; letter-spacing: 0.08em; font-weight: 900; }
+  .cp-section-divider { margin: 20px 0 4px; padding-top: 14px; border-top: 1px solid #F0DAE8; }
+  .cp-danger-zone { margin-top: 20px; padding-top: 14px; border-top: 1px solid #F0DAE8; text-align: center; }
+  .cp-text-danger { background: none; border: none; color: #E43D74; font-size: 13px; cursor: pointer; font-weight: 800; }
+  .cp-confirm-row { display: flex; flex-direction: column; gap: 8px; align-items: center; font-size: 13px; color: #4F5C72; }
+  .cp-text-danger-confirm { background: #E43D74; color: #fff; border: none; border-radius: 11px; padding: 9px 16px; font-size: 13px; cursor: pointer; font-weight: 800; }
+  .cp-text-cancel { background: none; border: none; color: #68728A; font-size: 13px; cursor: pointer; font-weight: 800; }
+  @media (min-width: 480px) { .cp-overlay { align-items: center; } .cp-modal { border-radius: 24px; } }
 </style>
 </head>
 <body>
 <div id="root"></div>
-
 <script src="https://unpkg.com/react@18/umd/react.production.min.js" crossorigin></script>
 <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js" crossorigin></script>
 <script src="https://unpkg.com/@babel/standalone@7.29.7/babel.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/xlsx/dist/xlsx.full.min.js"></script>
-
 <script type="text/babel">
 const { useState, useEffect, useCallback } = React;
-
 const STORAGE_KEY = 'cashflow-multi-account-pools-data-v1';
 const LEGACY_STORAGE_KEY = 'cashpools-data';
 const FREQUENCIES = ['weekly', 'fortnightly', 'monthly'];
 const FREQ_LABEL = { weekly: 'Weekly', fortnightly: 'Fortnightly', monthly: 'Monthly' };
-const ACCOUNT_PALETTE = ['#16322E', '#2F6F6B', '#4F6F52', '#5A4F7A', '#7A4F5D', '#8A5D3B', '#315C72', '#3B6C61'];
-const POOL_PALETTE = ['#2F6F6B', '#3E8C86', '#5BAFA6', '#7FC4B8', '#A6D8C9', '#C9E5D6'];
-
+const ACCOUNT_PALETTE = [
+  { name: 'Sharesies pink', value: '#FF4B93' },
+  { name: 'Sharesies purple', value: '#6D3BFF' },
+  { name: 'ANZ blue', value: '#005BAB' },
+  { name: 'SBS orange', value: '#F58220' },
+  { name: 'SBS gold', value: '#FFC72C' },
+  { name: 'Teal', value: '#00A8A8' },
+  { name: 'Lime', value: '#66C84F' },
+  { name: 'Navy', value: '#172033' },
+];
+const POOL_PALETTE = ['#FF4B93', '#6D3BFF', '#005BAB', '#F58220', '#00A8A8', '#66C84F', '#FFC72C', '#E43D74'];
+const colorAt = (i) => ACCOUNT_PALETTE[i % ACCOUNT_PALETTE.length].value;
 const genId = () => Date.now().toString(36) + Math.random().toString(36).slice(2, 7);
 const round2 = (n) => Math.round((n + Number.EPSILON) * 100) / 100;
 const safeNum = (n) => Number.isFinite(parseFloat(n)) ? parseFloat(n) : 0;
-
-const formatMoney = (n) => {
-  const sign = n < 0 ? '-' : '';
-  return sign + '$' + Math.abs(n).toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ',');
-};
-
-const formatDate = (iso) => {
-  if (!iso) return '';
-  const d = iso && iso.length <= 10 ? new Date(iso + 'T00:00:00') : new Date(iso);
-  return d.toLocaleDateString('en-NZ', { day: 'numeric', month: 'short' });
-};
-
-function toISODate(d) {
-  return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
-}
+const formatMoney = (n) => { const sign = n < 0 ? '-' : ''; return sign + '$' + Math.abs(n).toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ','); };
+const formatDate = (iso) => { if (!iso) return ''; const d = iso && iso.length <= 10 ? new Date(iso + 'T00:00:00') : new Date(iso); return d.toLocaleDateString('en-NZ', { day: 'numeric', month: 'short' }); };
+function toISODate(d) { return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`; }
 function todayISO() { return toISODate(new Date()); }
-function addDays(dateStr, n) {
-  const d = new Date(dateStr + 'T00:00:00');
-  d.setDate(d.getDate() + n);
-  return toISODate(d);
-}
-function addMonthsClamped(dateStr, n) {
-  const d = new Date(dateStr + 'T00:00:00');
-  const day = d.getDate();
-  d.setDate(1);
-  d.setMonth(d.getMonth() + n);
-  const daysInMonth = new Date(d.getFullYear(), d.getMonth() + 1, 0).getDate();
-  d.setDate(Math.min(day, daysInMonth));
-  return toISODate(d);
-}
-function addInterval(dateStr, frequency) {
-  if (frequency === 'weekly') return addDays(dateStr, 7);
-  if (frequency === 'fortnightly') return addDays(dateStr, 14);
-  if (frequency === 'monthly') return addMonthsClamped(dateStr, 1);
-  return dateStr;
-}
-
-function defaultData() {
-  return {
-    setupComplete: false,
-    paydayFrequency: 'fortnightly',
-    nextPaydayDate: '',
-    accounts: [],
-    transactions: [],
-  };
-}
-
-function migrateLegacy(legacy) {
-  if (!legacy || !legacy.setupComplete || !legacy.pools) return null;
-  const accountId = genId();
-  const accountName = 'Main account';
-  return {
-    setupComplete: true,
-    paydayFrequency: legacy.paydayFrequency || 'fortnightly',
-    nextPaydayDate: legacy.nextPaydayDate || '',
-    accounts: [{
-      id: accountId,
-      name: accountName,
-      color: ACCOUNT_PALETTE[0],
-      paydayAmount: legacy.paydayAmount || 0,
-      pools: legacy.pools || [],
-    }],
-    transactions: (legacy.transactions || []).map((t) => ({
-      ...t,
-      accountId,
-      accountName,
-    })),
-  };
-}
-
-function getAccountTotal(account) {
-  return round2((account.pools || []).reduce((s, p) => s + safeNum(p.balance), 0));
-}
-
+function addDays(dateStr, n) { const d = new Date(dateStr + 'T00:00:00'); d.setDate(d.getDate() + n); return toISODate(d); }
+function addMonthsClamped(dateStr, n) { const d = new Date(dateStr + 'T00:00:00'); const day = d.getDate(); d.setDate(1); d.setMonth(d.getMonth() + n); const daysInMonth = new Date(d.getFullYear(), d.getMonth() + 1, 0).getDate(); d.setDate(Math.min(day, daysInMonth)); return toISODate(d); }
+function addInterval(dateStr, frequency) { if (frequency === 'weekly') return addDays(dateStr, 7); if (frequency === 'fortnightly') return addDays(dateStr, 14); if (frequency === 'monthly') return addMonthsClamped(dateStr, 1); return dateStr; }
+function defaultData() { return { setupComplete: false, paydayFrequency: 'fortnightly', nextPaydayDate: '', accounts: [], transactions: [] }; }
+function poolAllocation(account, pool) { if (pool.allocation !== undefined) return safeNum(pool.allocation); return round2(safeNum(account.paydayAmount) * safeNum(pool.percent) / 100); }
+function migratePool(account, pool) { return { ...pool, allocation: round2(poolAllocation(account, pool)), balance: round2(safeNum(pool.balance)) }; }
+function migrateLegacy(legacy) { if (!legacy || !legacy.setupComplete || !legacy.pools) return null; const accountId = genId(); const account = { id: accountId, name: 'Main account', color: colorAt(0), paydayAmount: legacy.paydayAmount || 0, pools: [] }; account.pools = (legacy.pools || []).map((p) => migratePool(account, p)); return { setupComplete: true, paydayFrequency: legacy.paydayFrequency || 'fortnightly', nextPaydayDate: legacy.nextPaydayDate || '', accounts: [account], transactions: (legacy.transactions || []).map((t) => ({ ...t, accountId, accountName: account.name })) }; }
+function normaliseData(data) { if (!data) return defaultData(); if (!data.setupComplete) return { ...defaultData(), ...data }; return { ...data, accounts: (data.accounts || []).map((a, i) => ({ ...a, color: a.color || colorAt(i), paydayAmount: round2(safeNum(a.paydayAmount)), pools: (a.pools || []).map((p) => migratePool(a, p)), autopayments: (a.autopayments || []).map((ap) => ({ ...ap, amount: round2(safeNum(ap.amount)) })) })), transactions: data.transactions || [] }; }
+function getAccountTotal(account) { return round2((account.pools || []).reduce((s, p) => s + safeNum(p.balance), 0)); }
+function allocationRemaining(account) { return round2(safeNum(account.paydayAmount) - (account.pools || []).reduce((s, p) => s + poolAllocation(account, p), 0)); }
+function findPoolName(account, poolId) { return account.pools.find((p) => p.id === poolId)?.name || ''; }
 function catchUpPaydays(data) {
-  if (!data.paydayFrequency || !data.nextPaydayDate || !data.accounts?.length) {
-    return { data, count: 0 };
-  }
-  let accounts = data.accounts;
-  let transactions = data.transactions || [];
-  let nextPaydayDate = data.nextPaydayDate;
-  const today = todayISO();
-  let count = 0;
-  const SAFETY_CAP = 156;
-
+  if (!data.paydayFrequency || !data.nextPaydayDate || !data.accounts?.length) return { data, count: 0 };
+  let accounts = data.accounts; let transactions = data.transactions || []; let nextPaydayDate = data.nextPaydayDate; const today = todayISO(); let count = 0; const SAFETY_CAP = 156;
   while (nextPaydayDate <= today && count < SAFETY_CAP) {
     let newTxs = [];
     accounts = accounts.map((account) => {
-      const paydayAmount = safeNum(account.paydayAmount);
-      const pools = (account.pools || []).map((p) => {
-        const share = round2((paydayAmount * safeNum(p.percent)) / 100);
-        newTxs.push({
-          id: genId(),
-          date: nextPaydayDate,
-          type: 'deposit',
-          accountId: account.id,
-          accountName: account.name,
-          poolId: p.id,
-          poolName: p.name,
-          amount: share,
-          note: 'Payday',
-        });
-        return { ...p, balance: round2(safeNum(p.balance) + share) };
+      let pools = (account.pools || []).map((p) => {
+        const amount = round2(poolAllocation(account, p));
+        if (amount > 0) newTxs.push({ id: genId(), date: nextPaydayDate, type: 'deposit', accountId: account.id, accountName: account.name, poolId: p.id, poolName: p.name, amount, note: 'Payday' });
+        return { ...p, balance: round2(safeNum(p.balance) + amount) };
+      });
+      (account.autopayments || []).forEach((ap) => {
+        const amount = round2(safeNum(ap.amount)); if (!amount || !ap.poolId) return;
+        const pool = pools.find((p) => p.id === ap.poolId); if (!pool) return;
+        pools = pools.map((p) => p.id === ap.poolId ? { ...p, balance: round2(safeNum(p.balance) - amount) } : p);
+        newTxs.push({ id: genId(), date: nextPaydayDate, type: 'expense', accountId: account.id, accountName: account.name, poolId: ap.poolId, poolName: pool.name, amount, note: `Autopayment: ${ap.name || 'Payment'}` });
       });
       return { ...account, pools };
     });
-    transactions = [...newTxs, ...transactions];
-    nextPaydayDate = addInterval(nextPaydayDate, data.paydayFrequency);
-    count++;
+    transactions = [...newTxs, ...transactions]; nextPaydayDate = addInterval(nextPaydayDate, data.paydayFrequency); count++;
   }
-
   return { data: { ...data, accounts, transactions, nextPaydayDate }, count };
 }
-
-function makeStartingTransactions(accounts) {
-  const today = todayISO();
-  const txs = [];
-  accounts.forEach((account) => {
-    account.pools.forEach((p) => {
-      if (safeNum(p.balance) > 0) {
-        txs.push({
-          id: genId(), date: today, type: 'deposit',
-          accountId: account.id, accountName: account.name,
-          poolId: p.id, poolName: p.name,
-          amount: round2(safeNum(p.balance)), note: 'Starting balance',
-        });
-      }
-    });
-  });
-  return txs;
-}
-
-function IconBase({ children, size = 18, ...rest }) {
-  return (
-    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor"
-      strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" {...rest}>
-      {children}
-    </svg>
-  );
-}
+function makeStartingTransactions(accounts) { const today = todayISO(); const txs = []; accounts.forEach((account) => { account.pools.forEach((p) => { if (safeNum(p.balance) > 0) txs.push({ id: genId(), date: today, type: 'deposit', accountId: account.id, accountName: account.name, poolId: p.id, poolName: p.name, amount: round2(safeNum(p.balance)), note: 'Starting balance' }); }); }); return txs; }
+function IconBase({ children, size = 18, ...rest }) { return <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" {...rest}>{children}</svg>; }
 function Settings(props) { return <IconBase {...props}><line x1="4" y1="6" x2="20" y2="6"/><circle cx="14" cy="6" r="2"/><line x1="4" y1="12" x2="20" y2="12"/><circle cx="8" cy="12" r="2"/><line x1="4" y1="18" x2="20" y2="18"/><circle cx="16" cy="18" r="2"/></IconBase>; }
 function Plus(props) { return <IconBase {...props}><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></IconBase>; }
 function X(props) { return <IconBase {...props}><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></IconBase>; }
@@ -312,430 +195,46 @@ function ChevronDown(props) { return <IconBase {...props}><polyline points="6 9 
 function ChevronUp(props) { return <IconBase {...props}><polyline points="18 15 12 9 6 15"/></IconBase>; }
 function ArrowDownRight(props) { return <IconBase {...props}><line x1="7" y1="7" x2="17" y2="17"/><polyline points="17 9 17 17 9 17"/></IconBase>; }
 function ArrowLeft(props) { return <IconBase {...props}><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></IconBase>; }
-
+function FrequencyPicker({ value, onChange }) { return <div className="cp-freq-row">{FREQUENCIES.map((f) => <button key={f} type="button" className={`cp-freq-btn ${value === f ? 'cp-freq-btn-active' : ''}`} onClick={() => onChange(f)}>{FREQ_LABEL[f]}</button>)}</div>; }
+function ColorPicker({ value, onChange }) { return <div className="cp-color-row">{ACCOUNT_PALETTE.map((c) => <button key={c.value} className={`cp-color-dot ${value === c.value ? 'cp-color-dot-active' : ''}`} style={{ background: c.value }} onClick={() => onChange(c.value)} aria-label={`Use ${c.name}`} title={c.name} />)}</div>; }
+function RemainingRow({ account }) { const remaining = allocationRemaining(account); const ok = Math.abs(remaining) < 0.01; const label = ok ? 'Fully allocated' : remaining > 0 ? `${formatMoney(remaining)} still to allocate` : `${formatMoney(Math.abs(remaining))} over allocated`; return <div className={`cp-total-row ${ok ? 'cp-total-ok' : ''}`}>{label}</div>; }
+function AutopaymentEditor({ account, updateAutopayment, addAutopayment, removeAutopayment }) { return <div className="cp-section-divider"><div className="cp-section-title">Autopayments from {account.name || 'account'}</div><p className="cp-muted">These leave this account each payday after your pool money is added.</p><div className="cp-editor-list">{(account.autopayments || []).map((ap) => <div className="cp-editor-card" key={ap.id}><div className="cp-editor-top"><input className="cp-name-input" placeholder="Payment name" value={ap.name} onChange={(e) => updateAutopayment(account.id, ap.id, 'name', e.target.value)} /><button className="cp-icon-btn-sm" onClick={() => removeAutopayment(account.id, ap.id)} aria-label="Remove autopayment"><X size={16} /></button></div><div className="cp-editor-bottom"><div className="cp-mini-field"><span className="cp-mini-field-label">From pool</span><select className="cp-select" value={ap.poolId || ''} onChange={(e) => updateAutopayment(account.id, ap.id, 'poolId', e.target.value)}>{account.pools.map((p) => <option key={p.id} value={p.id}>{p.name || 'Unnamed pool'}</option>)}</select></div><div className="cp-mini-field"><span className="cp-mini-field-label">Amount</span><div className="cp-mini-field-box"><span>$</span><input type="number" inputMode="decimal" min="0" placeholder="0.00" value={ap.amount} onChange={(e) => updateAutopayment(account.id, ap.id, 'amount', e.target.value)} /></div></div></div></div>)}</div><button className="cp-add-btn" onClick={() => addAutopayment(account.id)}><Plus size={16} /> Add an autopayment</button></div>; }
 function CashflowApp() {
-  const [data, setData] = useState(null);
-  const [loading, setLoading] = useState(true);
-  const [saveError, setSaveError] = useState(false);
-  const [showSettings, setShowSettings] = useState(false);
-  const [showSpend, setShowSpend] = useState(false);
-  const [selectedAccountId, setSelectedAccountId] = useState(null);
-  const [showHistory, setShowHistory] = useState(false);
-  const [toast, setToast] = useState(null);
-
-  const flashToast = useCallback((msg) => {
-    setToast(msg);
-    setTimeout(() => setToast(null), 2600);
-  }, []);
-
-  useEffect(() => {
-    try {
-      const raw = localStorage.getItem(STORAGE_KEY);
-      const legacyRaw = localStorage.getItem(LEGACY_STORAGE_KEY);
-      let loaded = raw ? JSON.parse(raw) : (legacyRaw ? migrateLegacy(JSON.parse(legacyRaw)) : defaultData());
-      if (!loaded) loaded = defaultData();
-      if (loaded.setupComplete) {
-        const { data: caughtUp, count } = catchUpPaydays(loaded);
-        loaded = caughtUp;
-        if (count > 0) {
-          try { localStorage.setItem(STORAGE_KEY, JSON.stringify(loaded)); } catch (e) {}
-          setTimeout(() => flashToast(`Added ${count} payday deposit${count > 1 ? 's' : ''} while you were away`), 500);
-        }
-      }
-      setData(loaded);
-    } catch (e) {
-      setData(defaultData());
-    } finally {
-      setLoading(false);
-    }
-  }, [flashToast]);
-
-  const persist = useCallback((next) => {
-    setData(next);
-    try {
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(next));
-      setSaveError(false);
-    } catch (e) {
-      setSaveError(true);
-    }
-  }, []);
-
+  const [data, setData] = useState(null); const [loading, setLoading] = useState(true); const [saveError, setSaveError] = useState(false); const [showSettings, setShowSettings] = useState(false); const [showSpend, setShowSpend] = useState(false); const [selectedAccountId, setSelectedAccountId] = useState(null); const [showHistory, setShowHistory] = useState(false); const [toast, setToast] = useState(null);
+  const flashToast = useCallback((msg) => { setToast(msg); setTimeout(() => setToast(null), 2600); }, []);
+  useEffect(() => { try { const raw = localStorage.getItem(STORAGE_KEY); const legacyRaw = localStorage.getItem(LEGACY_STORAGE_KEY); let loaded = raw ? JSON.parse(raw) : (legacyRaw ? migrateLegacy(JSON.parse(legacyRaw)) : defaultData()); loaded = normaliseData(loaded); if (loaded.setupComplete) { const result = catchUpPaydays(loaded); loaded = result.data; if (result.count > 0) { try { localStorage.setItem(STORAGE_KEY, JSON.stringify(loaded)); } catch (e) {} setTimeout(() => flashToast(`Added ${result.count} payday update${result.count > 1 ? 's' : ''} while you were away`), 500); } } setData(loaded); } catch (e) { setData(defaultData()); } finally { setLoading(false); } }, [flashToast]);
+  const persist = useCallback((next) => { const normalised = normaliseData(next); setData(normalised); try { localStorage.setItem(STORAGE_KEY, JSON.stringify(normalised)); setSaveError(false); } catch (e) { setSaveError(true); } }, []);
   const selectedAccount = data?.accounts?.find((a) => a.id === selectedAccountId) || null;
-
-  const logSpend = ({ accountId, poolId, amount, note }) => {
-    const now = new Date().toISOString();
-    const account = data.accounts.find((a) => a.id === accountId);
-    const pool = account?.pools.find((p) => p.id === poolId);
-    if (!account || !pool || !amount) return;
-    const accounts = data.accounts.map((a) => {
-      if (a.id !== accountId) return a;
-      return {
-        ...a,
-        pools: a.pools.map((p) => p.id === poolId ? { ...p, balance: round2(safeNum(p.balance) - amount) } : p),
-      };
-    });
-    const tx = { id: genId(), date: now, type: 'expense', accountId, accountName: account.name, poolId, poolName: pool.name, amount, note: note || '' };
-    persist({ ...data, accounts, transactions: [tx, ...(data.transactions || [])] });
-    setShowSpend(false);
-    flashToast(`${formatMoney(amount)} logged from ${account.name} / ${pool.name}`);
-  };
-
-  const exportActivity = () => {
-    const rows = (data.transactions || []).slice().reverse().map((t) => ({
-      Date: t.date && t.date.length <= 10 ? t.date : toISODate(new Date(t.date)),
-      Type: t.type,
-      Account: t.accountName || '',
-      Pool: t.poolName || '',
-      Amount: t.type === 'expense' ? -Math.abs(t.amount) : Math.abs(t.amount),
-      Note: t.note || '',
-    }));
-
-    if (!rows.length) {
-      flashToast('No activity to export yet');
-      return;
-    }
-    if (!window.XLSX) {
-      flashToast('Export library did not load. Check your internet connection.');
-      return;
-    }
-    const wb = XLSX.utils.book_new();
-    const ws = XLSX.utils.json_to_sheet(rows);
-    ws['!cols'] = [{ wch: 12 }, { wch: 12 }, { wch: 22 }, { wch: 22 }, { wch: 12 }, { wch: 28 }];
-    XLSX.utils.book_append_sheet(wb, ws, 'Activity');
-    XLSX.writeFile(wb, `cashflow-activity-${todayISO()}.xlsx`);
-  };
-
-  if (loading || !data) {
-    return <div style={{ minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', background: '#F1F5F3' }}><div className="cp-loading">Loading your cashflow…</div></div>;
-  }
-
-  if (!data.setupComplete) {
-    return <SetupFlow onComplete={(d) => persist(d)} />;
-  }
-
-  if (selectedAccount) {
-    return (
-      <div className="cp-root">
-        <div className="cp-shell">
-          <button className="cp-back-btn" onClick={() => { setSelectedAccountId(null); setShowHistory(false); }}><ArrowLeft size={15} /> Accounts</button>
-          <header className="cp-header">
-            <h1 className="cp-title cp-title-sm">{selectedAccount.name}</h1>
-            <button className="cp-icon-btn" onClick={() => setShowSettings(true)} aria-label="Settings"><Settings size={20} /></button>
-          </header>
-
-          <AccountHero account={selectedAccount} data={data} />
-          <div className="cp-actions">
-            <button className="cp-action cp-action-spend" onClick={() => setShowSpend(true)}><ArrowDownRight size={18} /><span>Log a spend</span></button>
-          </div>
-          <PoolList account={selectedAccount} />
-          <RecentActivity
-            transactions={(data.transactions || []).filter((t) => t.accountId === selectedAccount.id)}
-            showHistory={showHistory}
-            setShowHistory={setShowHistory}
-          />
-          {saveError && <div className="cp-save-warning">Couldn't save — this browser may be blocking storage for this page.</div>}
-        </div>
-        {showSpend && <SpendModal account={selectedAccount} onClose={() => setShowSpend(false)} onSubmit={logSpend} />}
-        {showSettings && <SettingsModal data={data} onClose={() => setShowSettings(false)} onSave={(d) => { persist(d); setShowSettings(false); }} onReset={() => { persist(defaultData()); setSelectedAccountId(null); setShowSettings(false); }} onExport={exportActivity} />}
-        {toast && <div className="cp-toast">{toast}</div>}
-      </div>
-    );
-  }
-
-  return (
-    <div className="cp-root">
-      <div className="cp-shell">
-        <header className="cp-header">
-          <h1 className="cp-title">Accounts</h1>
-          <button className="cp-icon-btn" onClick={() => setShowSettings(true)} aria-label="Settings"><Settings size={20} /></button>
-        </header>
-        <div className="cp-account-list">
-          {data.accounts.map((account) => (
-            <button className="cp-account-card" key={account.id} style={{ background: account.color || ACCOUNT_PALETTE[0] }} onClick={() => setSelectedAccountId(account.id)}>
-              <Wave />
-              <div className="cp-account-card-content">
-                <div className="cp-account-card-name">{account.name}</div>
-                <div className="cp-account-card-amount">{formatMoney(getAccountTotal(account))}</div>
-              </div>
-            </button>
-          ))}
-        </div>
-        {saveError && <div className="cp-save-warning">Couldn't save — this browser may be blocking storage for this page.</div>}
-      </div>
-      {showSettings && <SettingsModal data={data} onClose={() => setShowSettings(false)} onSave={(d) => { persist(d); setShowSettings(false); }} onReset={() => { persist(defaultData()); setShowSettings(false); }} onExport={exportActivity} />}
-      {toast && <div className="cp-toast">{toast}</div>}
-    </div>
-  );
+  const logSpend = ({ accountId, poolId, amount, note }) => { const now = new Date().toISOString(); const account = data.accounts.find((a) => a.id === accountId); const pool = account?.pools.find((p) => p.id === poolId); if (!account || !pool || !amount) return; const accounts = data.accounts.map((a) => a.id !== accountId ? a : { ...a, pools: a.pools.map((p) => p.id === poolId ? { ...p, balance: round2(safeNum(p.balance) - amount) } : p) }); const tx = { id: genId(), date: now, type: 'expense', accountId, accountName: account.name, poolId, poolName: pool.name, amount, note: note || '' }; persist({ ...data, accounts, transactions: [tx, ...(data.transactions || [])] }); setShowSpend(false); flashToast(`${formatMoney(amount)} logged from ${account.name} / ${pool.name}`); };
+  const exportActivity = () => { const rows = (data.transactions || []).slice().reverse().map((t) => ({ Date: t.date && t.date.length <= 10 ? t.date : toISODate(new Date(t.date)), Type: t.type, Account: t.accountName || '', Pool: t.poolName || '', Amount: t.type === 'expense' ? -Math.abs(t.amount) : Math.abs(t.amount), Note: t.note || '' })); if (!rows.length) { flashToast('No activity to export yet'); return; } if (!window.XLSX) { flashToast('Export library did not load. Check your internet connection.'); return; } const wb = XLSX.utils.book_new(); const ws = XLSX.utils.json_to_sheet(rows); ws['!cols'] = [{ wch: 12 }, { wch: 13 }, { wch: 22 }, { wch: 22 }, { wch: 12 }, { wch: 32 }]; XLSX.utils.book_append_sheet(wb, ws, 'Activity'); XLSX.writeFile(wb, `cashflow-activity-${todayISO()}.xlsx`); };
+  if (loading || !data) return <div style={{ minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', background: '#FFF7E8' }}><div className="cp-loading">Loading your cashflow...</div></div>;
+  if (!data.setupComplete) return <SetupFlow onComplete={(d) => persist(d)} />;
+  if (selectedAccount) return <div className="cp-root"><div className="cp-shell"><button className="cp-back-btn" onClick={() => { setSelectedAccountId(null); setShowHistory(false); }}><ArrowLeft size={15} /> Accounts</button><header className="cp-header"><div><div className="cp-eyebrow">Account</div><h1 className="cp-title">{selectedAccount.name}</h1></div><button className="cp-icon-btn" onClick={() => setShowSettings(true)} aria-label="Settings"><Settings size={20} /></button></header><AccountHero account={selectedAccount} data={data} /><div className="cp-actions"><button className="cp-action cp-action-spend" onClick={() => setShowSpend(true)}><ArrowDownRight size={18} /><span>Log a spend</span></button></div><PoolList account={selectedAccount} /><AutopaymentList account={selectedAccount} /><RecentActivity transactions={(data.transactions || []).filter((t) => t.accountId === selectedAccount.id)} showHistory={showHistory} setShowHistory={setShowHistory} />{saveError && <div className="cp-save-warning">Could not save. This browser may be blocking storage.</div>}</div>{showSpend && <SpendModal account={selectedAccount} onClose={() => setShowSpend(false)} onSubmit={logSpend} />}{showSettings && <SettingsModal data={data} onClose={() => setShowSettings(false)} onSave={(d) => { persist(d); setShowSettings(false); }} onReset={() => { persist(defaultData()); setShowSettings(false); setSelectedAccountId(null); }} onExport={exportActivity} />}{toast && <div className="cp-toast">{toast}</div>}</div>;
+  return <div className="cp-root"><div className="cp-shell"><header className="cp-header"><div><div className="cp-eyebrow">Cashflow</div><h1 className="cp-title">Accounts</h1></div><button className="cp-icon-btn" onClick={() => setShowSettings(true)} aria-label="Settings"><Settings size={20} /></button></header><div className="cp-account-list">{data.accounts.map((account) => <button className="cp-account-card" key={account.id} style={{ background: account.color || colorAt(0) }} onClick={() => setSelectedAccountId(account.id)}><Wave /><div className="cp-account-card-content"><div className="cp-account-card-name">{account.name}</div><div className="cp-account-card-amount">{formatMoney(getAccountTotal(account))}</div><div className="cp-account-card-sub">{formatMoney(account.paydayAmount)} salary allocation each payday</div></div></button>)}</div>{saveError && <div className="cp-save-warning">Could not save. This browser may be blocking storage.</div>}</div>{showSettings && <SettingsModal data={data} onClose={() => setShowSettings(false)} onSave={(d) => { persist(d); setShowSettings(false); }} onReset={() => { persist(defaultData()); setShowSettings(false); setSelectedAccountId(null); }} onExport={exportActivity} />}{toast && <div className="cp-toast">{toast}</div>}</div>;
 }
-
-function FrequencyPicker({ value, onChange }) {
-  return <div className="cp-freq-row">{FREQUENCIES.map((f) => <button key={f} type="button" className={`cp-freq-btn ${value === f ? 'cp-freq-btn-active' : ''}`} onClick={() => onChange(f)}>{FREQ_LABEL[f]}</button>)}</div>;
-}
-
 function SetupFlow({ onComplete }) {
-  const [step, setStep] = useState('payday');
-  const [accountIndex, setAccountIndex] = useState(0);
-  const [frequency, setFrequency] = useState('fortnightly');
-  const [nextPaydayDate, setNextPaydayDate] = useState('');
-  const [accounts, setAccounts] = useState([{ id: genId(), name: '', color: ACCOUNT_PALETTE[0], paydayAmount: '', pools: [{ id: genId(), name: '', percent: '', startingBalance: '' }] }]);
-
-  const canContinuePayday = frequency && nextPaydayDate && accounts.every((a) => a.name.trim() && safeNum(a.paydayAmount) > 0);
-  const activeAccount = accounts[accountIndex];
-  const poolTotal = activeAccount ? activeAccount.pools.reduce((s, p) => s + safeNum(p.percent), 0) : 0;
-  const canSavePools = activeAccount && activeAccount.pools.every((p) => p.name.trim() && safeNum(p.percent) > 0 && (p.startingBalance === '' || !isNaN(safeNum(p.startingBalance)))) && Math.abs(poolTotal - 100) < 0.05;
-
-  const updateAccount = (id, field, value) => setAccounts((as) => as.map((a) => a.id === id ? { ...a, [field]: value } : a));
-  const addAccount = () => setAccounts((as) => [...as, { id: genId(), name: '', color: ACCOUNT_PALETTE[as.length % ACCOUNT_PALETTE.length], paydayAmount: '', pools: [{ id: genId(), name: '', percent: '', startingBalance: '' }] }]);
-  const removeAccount = (id) => setAccounts((as) => as.length > 1 ? as.filter((a) => a.id !== id) : as);
-  const updatePool = (poolId, field, value) => setAccounts((as) => as.map((a, i) => i !== accountIndex ? a : { ...a, pools: a.pools.map((p) => p.id === poolId ? { ...p, [field]: value } : p) }));
-  const addPool = () => setAccounts((as) => as.map((a, i) => i !== accountIndex ? a : { ...a, pools: [...a.pools, { id: genId(), name: '', percent: '', startingBalance: '' }] }));
-  const removePool = (poolId) => setAccounts((as) => as.map((a, i) => i !== accountIndex ? a : { ...a, pools: a.pools.length > 1 ? a.pools.filter((p) => p.id !== poolId) : a.pools }));
-
-  const finishOrNext = () => {
-    if (!canSavePools) return;
-    if (accountIndex < accounts.length - 1) {
-      setAccountIndex(accountIndex + 1);
-      window.scrollTo({ top: 0, behavior: 'smooth' });
-      return;
-    }
-    const finalAccounts = accounts.map((a) => ({
-      id: a.id,
-      name: a.name.trim(),
-      color: a.color || ACCOUNT_PALETTE[0],
-      paydayAmount: round2(safeNum(a.paydayAmount)),
-      pools: a.pools.map((p) => ({ id: p.id, name: p.name.trim(), percent: round2(safeNum(p.percent)), balance: round2(safeNum(p.startingBalance)) })),
-    }));
-    onComplete({ setupComplete: true, paydayFrequency: frequency, nextPaydayDate, accounts: finalAccounts, transactions: makeStartingTransactions(finalAccounts) });
-  };
-
-  if (step === 'payday') {
-    return (
-      <div className="cp-root"><div className="cp-shell">
-        <header className="cp-header"><div><div className="cp-eyebrow">Set up</div><h1 className="cp-title">Pay day</h1></div></header>
-        <label className="cp-label">How often are you paid?</label>
-        <FrequencyPicker value={frequency} onChange={setFrequency} />
-        <label className="cp-label">Next payday date</label>
-        <input type="date" className="cp-date-input" value={nextPaydayDate} onChange={(e) => setNextPaydayDate(e.target.value)} />
-        <label className="cp-label" style={{ marginTop: 18 }}>Accounts</label>
-        <div className="cp-editor-list">
-          {accounts.map((a, i) => (
-            <div className="cp-editor-card" key={a.id}>
-              <div className="cp-editor-top">
-                <Droplet size={15} style={{ color: a.color }} />
-                <input className="cp-name-input" placeholder="Account name" value={a.name} onChange={(e) => updateAccount(a.id, 'name', e.target.value)} />
-                <button className="cp-icon-btn-sm" onClick={() => removeAccount(a.id)} aria-label="Remove account"><X size={16} /></button>
-              </div>
-              <div className="cp-color-row">
-                {ACCOUNT_PALETTE.map((c) => <button key={c} className={`cp-color-dot ${a.color === c ? 'cp-color-dot-active' : ''}`} style={{ background: c }} onClick={() => updateAccount(a.id, 'color', c)} aria-label={`Use colour ${c}`} />)}
-              </div>
-              <div className="cp-mini-field">
-                <span className="cp-mini-field-label">Payday deposit</span>
-                <div className="cp-mini-field-box"><span>$</span><input type="number" inputMode="decimal" min="0" placeholder="0.00" value={a.paydayAmount} onChange={(e) => updateAccount(a.id, 'paydayAmount', e.target.value)} /></div>
-              </div>
-            </div>
-          ))}
-        </div>
-        <button className="cp-add-btn" onClick={addAccount}><Plus size={16} /> Add an account</button>
-        <button className="cp-primary-btn" disabled={!canContinuePayday} onClick={() => setStep('pools')}>Start allocating</button>
-      </div></div>
-    );
-  }
-
-  return (
-    <div className="cp-root"><div className="cp-shell">
-      <button className="cp-back-btn" onClick={() => accountIndex === 0 ? setStep('payday') : setAccountIndex(accountIndex - 1)}><ArrowLeft size={15} /> Back</button>
-      <header className="cp-header"><div><div className="cp-eyebrow">Set up</div><h1 className="cp-title">Pools <span>for {activeAccount.name || 'account'}</span></h1></div></header>
-      <p className="cp-intro">Split this account's payday deposit across pools. Each account's pools need to add up to 100%.</p>
-      <label className="cp-label">Pools</label>
-      <div className="cp-editor-list">
-        {activeAccount.pools.map((p, i) => (
-          <div className="cp-editor-card" key={p.id}>
-            <div className="cp-editor-top">
-              <Droplet size={15} style={{ color: POOL_PALETTE[i % POOL_PALETTE.length] }} />
-              <input className="cp-name-input" placeholder="Pool name" value={p.name} onChange={(e) => updatePool(p.id, 'name', e.target.value)} />
-              <button className="cp-icon-btn-sm" onClick={() => removePool(p.id)} aria-label="Remove pool"><X size={16} /></button>
-            </div>
-            <div className="cp-editor-bottom">
-              <div className="cp-mini-field"><span className="cp-mini-field-label">Split</span><div className="cp-mini-field-box"><input type="number" inputMode="decimal" min="0" max="100" placeholder="0" value={p.percent} onChange={(e) => updatePool(p.id, 'percent', e.target.value)} /><span>%</span></div></div>
-              <div className="cp-mini-field"><span className="cp-mini-field-label">Starting balance</span><div className="cp-mini-field-box"><span>$</span><input type="number" inputMode="decimal" min="0" placeholder="0.00" value={p.startingBalance} onChange={(e) => updatePool(p.id, 'startingBalance', e.target.value)} /></div></div>
-            </div>
-          </div>
-        ))}
-      </div>
-      <button className="cp-add-btn" onClick={addPool}><Plus size={16} /> Add a pool</button>
-      <div className={`cp-total-row ${Math.abs(poolTotal - 100) < 0.05 ? 'cp-total-ok' : ''}`}>Total allocated: {poolTotal.toFixed(1)}%</div>
-      <button className="cp-primary-btn" disabled={!canSavePools} onClick={finishOrNext}>{accountIndex < accounts.length - 1 ? `Next account (${accountIndex + 2}/${accounts.length})` : 'Start tracking'}</button>
-    </div></div>
-  );
+  const [step, setStep] = useState('payday'); const [accountIndex, setAccountIndex] = useState(0); const [frequency, setFrequency] = useState('fortnightly'); const [nextPaydayDate, setNextPaydayDate] = useState(''); const [accounts, setAccounts] = useState([{ id: genId(), name: '', color: colorAt(0), paydayAmount: '', pools: [{ id: genId(), name: '', allocation: '', startingBalance: '' }], autopayments: [] }]);
+  const activeAccount = accounts[accountIndex]; const canContinuePayday = frequency && nextPaydayDate && accounts.every((a) => a.name.trim() && safeNum(a.paydayAmount) > 0); const canSavePools = activeAccount && activeAccount.pools.every((p) => p.name.trim() && safeNum(p.allocation) >= 0 && (p.startingBalance === '' || !isNaN(safeNum(p.startingBalance)))) && Math.abs(allocationRemaining(activeAccount)) < 0.01 && (activeAccount.autopayments || []).every((ap) => !ap.name && !safeNum(ap.amount) ? true : ap.name.trim() && ap.poolId && safeNum(ap.amount) > 0);
+  const updateAccount = (id, field, value) => setAccounts((as) => as.map((a) => a.id === id ? { ...a, [field]: value } : a)); const addAccount = () => setAccounts((as) => [...as, { id: genId(), name: '', color: colorAt(as.length), paydayAmount: '', pools: [{ id: genId(), name: '', allocation: '', startingBalance: '' }], autopayments: [] }]); const removeAccount = (id) => setAccounts((as) => as.length > 1 ? as.filter((a) => a.id !== id) : as); const updatePool = (poolId, field, value) => setAccounts((as) => as.map((a, i) => i !== accountIndex ? a : { ...a, pools: a.pools.map((p) => p.id === poolId ? { ...p, [field]: value } : p) })); const addPool = () => setAccounts((as) => as.map((a, i) => i !== accountIndex ? a : { ...a, pools: [...a.pools, { id: genId(), name: '', allocation: '', startingBalance: '' }] })); const removePool = (poolId) => setAccounts((as) => as.map((a, i) => i !== accountIndex ? a : { ...a, pools: a.pools.length > 1 ? a.pools.filter((p) => p.id !== poolId) : a.pools }));
+  const updateAutopayment = (accountId, apId, field, value) => setAccounts((as) => as.map((a) => a.id !== accountId ? a : { ...a, autopayments: (a.autopayments || []).map((ap) => ap.id === apId ? { ...ap, [field]: value } : ap) })); const addAutopayment = (accountId) => setAccounts((as) => as.map((a) => a.id !== accountId ? a : { ...a, autopayments: [...(a.autopayments || []), { id: genId(), name: '', poolId: a.pools[0]?.id || '', amount: '' }] })); const removeAutopayment = (accountId, apId) => setAccounts((as) => as.map((a) => a.id !== accountId ? a : { ...a, autopayments: (a.autopayments || []).filter((ap) => ap.id !== apId) }));
+  const finishOrNext = () => { if (!canSavePools) return; if (accountIndex < accounts.length - 1) { setAccountIndex(accountIndex + 1); window.scrollTo(0, 0); return; } const finalAccounts = accounts.map((a) => ({ id: a.id, name: a.name.trim(), color: a.color || colorAt(0), paydayAmount: round2(safeNum(a.paydayAmount)), pools: a.pools.map((p) => ({ id: p.id, name: p.name.trim(), allocation: round2(safeNum(p.allocation)), balance: round2(safeNum(p.startingBalance)) })), autopayments: (a.autopayments || []).filter((ap) => ap.name.trim() && safeNum(ap.amount) > 0).map((ap) => ({ id: ap.id, name: ap.name.trim(), poolId: ap.poolId, amount: round2(safeNum(ap.amount)) })) })); onComplete({ setupComplete: true, paydayFrequency: frequency, nextPaydayDate, accounts: finalAccounts, transactions: makeStartingTransactions(finalAccounts) }); };
+  if (step === 'payday') return <div className="cp-root"><div className="cp-shell"><header className="cp-header"><div><div className="cp-eyebrow">Set up</div><h1 className="cp-title">Payday</h1></div></header><p className="cp-intro">Set your global salary payday, then choose how much goes into each account. Each account gets its own colour and pools.</p><label className="cp-label">How often are you paid?</label><FrequencyPicker value={frequency} onChange={setFrequency} /><label className="cp-label">Next payday date</label><input type="date" className="cp-date-input" value={nextPaydayDate} onChange={(e) => setNextPaydayDate(e.target.value)} /><div className="cp-section-title">Accounts</div><div className="cp-editor-list">{accounts.map((a, i) => <div className="cp-editor-card" key={a.id}><div className="cp-editor-top"><Droplet size={15} style={{ color: a.color }} /><input className="cp-name-input" placeholder="Account name" value={a.name} onChange={(e) => updateAccount(a.id, 'name', e.target.value)} /><div className="cp-money-box"><span>$</span><input type="number" inputMode="decimal" min="0" placeholder="0" value={a.paydayAmount} onChange={(e) => updateAccount(a.id, 'paydayAmount', e.target.value)} /></div><button className="cp-icon-btn-sm" onClick={() => removeAccount(a.id)} aria-label="Remove account"><X size={16} /></button></div><ColorPicker value={a.color} onChange={(c) => updateAccount(a.id, 'color', c)} /></div>)}</div><button className="cp-add-btn" onClick={addAccount}><Plus size={16} /> Add an account</button><button className="cp-primary-btn" disabled={!canContinuePayday} onClick={() => setStep('pools')}>Start allocating</button></div></div>;
+  return <div className="cp-root"><div className="cp-shell"><button className="cp-back-btn" onClick={() => accountIndex === 0 ? setStep('payday') : setAccountIndex(accountIndex - 1)}><ArrowLeft size={15} /> Back</button><header className="cp-header"><div><div className="cp-eyebrow">Set up</div><h1 className="cp-title">Pools <span>for {activeAccount.name || 'account'}</span></h1></div></header><p className="cp-intro">Allocate exact dollar amounts from this account's {formatMoney(safeNum(activeAccount.paydayAmount))} payday deposit. No percentage rounding.</p><div className="cp-editor-list">{activeAccount.pools.map((p, i) => <div className="cp-editor-card" key={p.id}><div className="cp-editor-top"><Droplet size={15} style={{ color: POOL_PALETTE[i % POOL_PALETTE.length] }} /><input className="cp-name-input" placeholder="Pool name" value={p.name} onChange={(e) => updatePool(p.id, 'name', e.target.value)} /><button className="cp-icon-btn-sm" onClick={() => removePool(p.id)} aria-label="Remove pool"><X size={16} /></button></div><div className="cp-editor-bottom"><div className="cp-mini-field"><span className="cp-mini-field-label">Payday allocation</span><div className="cp-mini-field-box"><span>$</span><input type="number" inputMode="decimal" min="0" placeholder="0.00" value={p.allocation} onChange={(e) => updatePool(p.id, 'allocation', e.target.value)} /></div></div><div className="cp-mini-field"><span className="cp-mini-field-label">Starting balance</span><div className="cp-mini-field-box"><span>$</span><input type="number" inputMode="decimal" min="0" placeholder="0.00" value={p.startingBalance} onChange={(e) => updatePool(p.id, 'startingBalance', e.target.value)} /></div></div></div></div>)}</div><button className="cp-add-btn" onClick={addPool}><Plus size={16} /> Add a pool</button><RemainingRow account={activeAccount} /><AutopaymentEditor account={activeAccount} updateAutopayment={updateAutopayment} addAutopayment={addAutopayment} removeAutopayment={removeAutopayment} /><button className="cp-primary-btn" disabled={!canSavePools} onClick={finishOrNext}>{accountIndex < accounts.length - 1 ? `Next account (${accountIndex + 2}/${accounts.length})` : 'Start tracking'}</button></div></div>;
 }
-
-function AccountHero({ account, data }) {
-  return (
-    <div className="cp-hero" style={{ background: account.color || ACCOUNT_PALETTE[0] }}>
-      <Wave />
-      <div className="cp-hero-content">
-        <div className="cp-hero-label">Total across pools</div>
-        <div className="cp-hero-amount">{formatMoney(getAccountTotal(account))}</div>
-        {data.paydayFrequency && data.nextPaydayDate && <div className="cp-hero-next">Next payday · {formatDate(data.nextPaydayDate)} ({FREQ_LABEL[data.paydayFrequency]})</div>}
-      </div>
-    </div>
-  );
-}
-
-function PoolList({ account }) {
-  const totalBalance = getAccountTotal(account);
-  return (
-    <div className="cp-pools">
-      {account.pools.map((p, i) => {
-        const share = totalBalance > 0 ? Math.max(0, (safeNum(p.balance) / totalBalance) * 100) : 0;
-        return (
-          <div className="cp-pool" key={p.id}>
-            <div className="cp-pool-top">
-              <div className="cp-pool-name"><Droplet size={15} style={{ color: POOL_PALETTE[i % POOL_PALETTE.length] }} />{p.name}</div>
-              <div className="cp-pool-pct">{p.percent}% of payday</div>
-            </div>
-            <div className="cp-pool-balance" style={{ color: safeNum(p.balance) < 0 ? '#B85C45' : '#16322E' }}>{formatMoney(safeNum(p.balance))}</div>
-            <div className="cp-bar-track"><div className="cp-bar-fill" style={{ width: `${share}%`, background: POOL_PALETTE[i % POOL_PALETTE.length] }} /></div>
-          </div>
-        );
-      })}
-    </div>
-  );
-}
-
-function RecentActivity({ transactions, showHistory, setShowHistory }) {
-  return (
-    <>
-      <button className="cp-history-toggle" onClick={() => setShowHistory((s) => !s)}>Recent activity {showHistory ? <ChevronUp size={16} /> : <ChevronDown size={16} />}</button>
-      {showHistory && <div className="cp-history">
-        {transactions.length === 0 && <div className="cp-empty">Nothing logged yet.</div>}
-        {transactions.slice(0, 25).map((t) => <div className="cp-tx" key={t.id}>
-          <div><div className="cp-tx-pool">{t.poolName}</div><div className="cp-tx-note">{t.note || (t.type === 'deposit' ? 'Payday' : 'Spend')} · {formatDate(t.date)}</div></div>
-          <div className={`cp-tx-amount ${t.type === 'deposit' ? 'cp-tx-in' : 'cp-tx-out'}`}>{t.type === 'deposit' ? '+' : '−'}{formatMoney(Math.abs(t.amount))}</div>
-        </div>)}
-      </div>}
-    </>
-  );
-}
-
-function SpendModal({ account, onClose, onSubmit }) {
-  const [poolId, setPoolId] = useState(account.pools[0]?.id || '');
-  const [amount, setAmount] = useState('');
-  const [note, setNote] = useState('');
-  const valid = poolId && safeNum(amount) > 0;
-  return (
-    <div className="cp-overlay" onClick={onClose}><div className="cp-modal" onClick={(e) => e.stopPropagation()}>
-      <div className="cp-modal-head"><h2>Log a spend</h2><button className="cp-icon-btn-sm" onClick={onClose}><X size={18} /></button></div>
-      <div className="cp-muted">From {account.name}</div>
-      <label className="cp-label">From pool</label>
-      <select className="cp-select" value={poolId} onChange={(e) => setPoolId(e.target.value)}>{account.pools.map((p) => <option key={p.id} value={p.id}>{p.name}</option>)}</select>
-      <label className="cp-label">Amount</label>
-      <div className="cp-input-money"><span>$</span><input type="number" inputMode="decimal" min="0" placeholder="0.00" autoFocus value={amount} onChange={(e) => setAmount(e.target.value)} /></div>
-      <label className="cp-label">Note (optional)</label>
-      <input className="cp-text-input" placeholder="What was it for?" value={note} onChange={(e) => setNote(e.target.value)} />
-      <button className="cp-primary-btn cp-spend-btn" disabled={!valid} onClick={() => onSubmit({ accountId: account.id, poolId, amount: round2(safeNum(amount)), note: note.trim() })}>Log spend</button>
-    </div></div>
-  );
-}
-
+function AccountHero({ account, data }) { return <div className="cp-hero" style={{ background: account.color || colorAt(0) }}><Wave /><div className="cp-hero-content"><div className="cp-hero-label">Total in this account's pools</div><div className="cp-hero-amount">{formatMoney(getAccountTotal(account))}</div>{data.paydayFrequency && data.nextPaydayDate && <div className="cp-hero-next">Next payday - {formatDate(data.nextPaydayDate)} ({FREQ_LABEL[data.paydayFrequency]})</div>}</div></div>; }
+function PoolList({ account }) { const totalBalance = getAccountTotal(account); return <div className="cp-pools">{account.pools.map((p, i) => { const share = totalBalance > 0 ? Math.max(0, (safeNum(p.balance) / totalBalance) * 100) : 0; return <div className="cp-pool" key={p.id}><div className="cp-pool-top"><div className="cp-pool-name"><Droplet size={15} style={{ color: POOL_PALETTE[i % POOL_PALETTE.length] }} />{p.name}</div><div className="cp-pool-pct">{formatMoney(poolAllocation(account, p))} each payday</div></div><div className="cp-pool-balance" style={{ color: safeNum(p.balance) < 0 ? '#E43D74' : '#172033' }}>{formatMoney(safeNum(p.balance))}</div><div className="cp-bar-track"><div className="cp-bar-fill" style={{ width: `${share}%`, background: POOL_PALETTE[i % POOL_PALETTE.length] }} /></div></div>; })}</div>; }
+function AutopaymentList({ account }) { const autopayments = account.autopayments || []; if (!autopayments.length) return null; return <div className="cp-autopay-list"><div className="cp-autopay-title">Autopayments each payday</div>{autopayments.map((ap) => <div className="cp-autopay-row" key={ap.id}><div><div className="cp-autopay-name">{ap.name}</div><div className="cp-autopay-meta">From {findPoolName(account, ap.poolId)}</div></div><div className="cp-autopay-amount">-{formatMoney(safeNum(ap.amount))}</div></div>)}</div>; }
+function RecentActivity({ transactions, showHistory, setShowHistory }) { return <><button className="cp-history-toggle" onClick={() => setShowHistory((s) => !s)}>Recent activity {showHistory ? <ChevronUp size={16} /> : <ChevronDown size={16} />}</button>{showHistory && <div className="cp-history">{transactions.length === 0 && <div className="cp-empty">Nothing logged yet.</div>}{transactions.slice(0, 25).map((t) => <div className="cp-tx" key={t.id}><div><div className="cp-tx-pool">{t.poolName}</div><div className="cp-tx-note">{t.note || (t.type === 'deposit' ? 'Payday' : 'Spend')} - {formatDate(t.date)}</div></div><div className={`cp-tx-amount ${t.type === 'deposit' ? 'cp-tx-in' : 'cp-tx-out'}`}>{t.type === 'deposit' ? '+' : '-'}{formatMoney(Math.abs(t.amount))}</div></div>)}</div>}</>; }
+function SpendModal({ account, onClose, onSubmit }) { const [poolId, setPoolId] = useState(account.pools[0]?.id || ''); const [amount, setAmount] = useState(''); const [note, setNote] = useState(''); const valid = poolId && safeNum(amount) > 0; return <div className="cp-overlay" onClick={onClose}><div className="cp-modal" onClick={(e) => e.stopPropagation()}><div className="cp-modal-head"><h2>Log a spend</h2><button className="cp-icon-btn-sm" onClick={onClose}><X size={18} /></button></div><div className="cp-muted">From {account.name}</div><label className="cp-label">From pool</label><select className="cp-select" value={poolId} onChange={(e) => setPoolId(e.target.value)}>{account.pools.map((p) => <option key={p.id} value={p.id}>{p.name}</option>)}</select><label className="cp-label">Amount</label><div className="cp-input-money"><span>$</span><input type="number" inputMode="decimal" min="0" placeholder="0.00" autoFocus value={amount} onChange={(e) => setAmount(e.target.value)} /></div><label className="cp-label">Note (optional)</label><input className="cp-text-input" placeholder="What was it for?" value={note} onChange={(e) => setNote(e.target.value)} /><button className="cp-primary-btn cp-spend-btn" disabled={!valid} onClick={() => onSubmit({ accountId: account.id, poolId, amount: round2(safeNum(amount)), note: note.trim() })}>Log spend</button></div></div>; }
 function SettingsModal({ data, onClose, onSave, onReset, onExport }) {
-  const [frequency, setFrequency] = useState(data.paydayFrequency || 'fortnightly');
-  const [nextPaydayDate, setNextPaydayDate] = useState(data.nextPaydayDate || '');
-  const [accounts, setAccounts] = useState(data.accounts.map((a, i) => ({ ...a, color: a.color || ACCOUNT_PALETTE[i % ACCOUNT_PALETTE.length], paydayAmount: String(a.paydayAmount || ''), pools: a.pools.map((p) => ({ ...p, percent: String(p.percent) })) })));
-  const [confirmReset, setConfirmReset] = useState(false);
-
-  const canSave = frequency && nextPaydayDate && accounts.every((a) =>
-    a.name.trim() && safeNum(a.paydayAmount) > 0 && a.pools.length &&
-    a.pools.every((p) => p.name.trim() && safeNum(p.percent) > 0) &&
-    Math.abs(a.pools.reduce((s, p) => s + safeNum(p.percent), 0) - 100) < 0.05
-  );
-
-  const updateAccount = (id, field, value) => setAccounts((as) => as.map((a) => a.id === id ? { ...a, [field]: value } : a));
-  const addAccount = () => setAccounts((as) => [...as, { id: genId(), name: '', color: ACCOUNT_PALETTE[as.length % ACCOUNT_PALETTE.length], paydayAmount: '', pools: [{ id: genId(), name: '', percent: '100', balance: 0 }] }]);
-  const removeAccount = (id) => setAccounts((as) => as.length > 1 ? as.filter((a) => a.id !== id) : as);
-  const updatePool = (accountId, poolId, field, value) => setAccounts((as) => as.map((a) => a.id !== accountId ? a : { ...a, pools: a.pools.map((p) => p.id === poolId ? { ...p, [field]: value } : p) }));
-  const addPool = (accountId) => setAccounts((as) => as.map((a) => a.id !== accountId ? a : { ...a, pools: [...a.pools, { id: genId(), name: '', percent: '', balance: 0 }] }));
-  const removePool = (accountId, poolId) => setAccounts((as) => as.map((a) => a.id !== accountId ? a : { ...a, pools: a.pools.length > 1 ? a.pools.filter((p) => p.id !== poolId) : a.pools }));
-
-  const save = () => {
-    if (!canSave) return;
-    onSave({
-      ...data,
-      paydayFrequency: frequency,
-      nextPaydayDate,
-      accounts: accounts.map((a) => ({
-        ...a,
-        name: a.name.trim(),
-        paydayAmount: round2(safeNum(a.paydayAmount)),
-        pools: a.pools.map((p) => ({ ...p, name: p.name.trim(), percent: round2(safeNum(p.percent)), balance: round2(safeNum(p.balance)) })),
-      })),
-    });
-  };
-
-  return (
-    <div className="cp-overlay" onClick={onClose}><div className="cp-modal" onClick={(e) => e.stopPropagation()}>
-      <div className="cp-modal-head"><h2>Settings</h2><button className="cp-icon-btn-sm" onClick={onClose}><X size={18} /></button></div>
-      <label className="cp-label">How often are you paid?</label>
-      <FrequencyPicker value={frequency} onChange={setFrequency} />
-      <label className="cp-label">Next payday date</label>
-      <input type="date" className="cp-date-input" value={nextPaydayDate} onChange={(e) => setNextPaydayDate(e.target.value)} />
-
-      <div className="cp-section-title">Accounts & payday allocations</div>
-      <div className="cp-editor-list">
-        {accounts.map((a, i) => (
-          <div className="cp-editor-card" key={a.id}>
-            <div className="cp-editor-top">
-              <Droplet size={15} style={{ color: a.color }} />
-              <input className="cp-name-input" placeholder="Account name" value={a.name} onChange={(e) => updateAccount(a.id, 'name', e.target.value)} />
-              <div className="cp-percent-box"><span>$</span><input type="number" inputMode="decimal" min="0" placeholder="0" value={a.paydayAmount} onChange={(e) => updateAccount(a.id, 'paydayAmount', e.target.value)} /></div>
-              <button className="cp-icon-btn-sm" onClick={() => removeAccount(a.id)} aria-label="Remove account"><X size={16} /></button>
-            </div>
-            <div className="cp-color-row">{ACCOUNT_PALETTE.map((c) => <button key={c} className={`cp-color-dot ${a.color === c ? 'cp-color-dot-active' : ''}`} style={{ background: c }} onClick={() => updateAccount(a.id, 'color', c)} aria-label={`Use colour ${c}`} />)}</div>
-          </div>
-        ))}
-      </div>
-      <button className="cp-add-btn" onClick={addAccount}><Plus size={16} /> Add an account</button>
-
-      {accounts.map((a) => {
-        const total = a.pools.reduce((s, p) => s + safeNum(p.percent), 0);
-        return (
-          <div key={a.id} className="cp-section-divider">
-            <div className="cp-section-title">{a.name || 'Account'} pools</div>
-            <div className="cp-editor-list">
-              {a.pools.map((p, i) => (
-                <div className="cp-flat-row" key={p.id}>
-                  <Droplet size={14} style={{ color: POOL_PALETTE[i % POOL_PALETTE.length] }} />
-                  <input className="cp-name-input" placeholder="Pool name" value={p.name} onChange={(e) => updatePool(a.id, p.id, 'name', e.target.value)} />
-                  <div className="cp-percent-box"><input type="number" inputMode="decimal" min="0" max="100" value={p.percent} onChange={(e) => updatePool(a.id, p.id, 'percent', e.target.value)} /><span>%</span></div>
-                  <button className="cp-icon-btn-sm" onClick={() => removePool(a.id, p.id)} aria-label="Remove pool"><X size={16} /></button>
-                </div>
-              ))}
-            </div>
-            <button className="cp-add-btn" onClick={() => addPool(a.id)}><Plus size={16} /> Add a pool</button>
-            <div className={`cp-total-row ${Math.abs(total - 100) < 0.05 ? 'cp-total-ok' : ''}`}>Total allocated: {total.toFixed(1)}%</div>
-          </div>
-        );
-      })}
-
-      <button className="cp-primary-btn" disabled={!canSave} onClick={save}>Save changes</button>
-      <button className="cp-secondary-btn" onClick={onExport}>Export activity</button>
-      <div className="cp-danger-zone">
-        {!confirmReset ? <button className="cp-text-danger" onClick={() => setConfirmReset(true)}>Start over (clears everything)</button> :
-          <div className="cp-confirm-row"><span>Clear all accounts, pools and history?</span><button className="cp-text-danger-confirm" onClick={onReset}>Yes, clear it</button><button className="cp-text-cancel" onClick={() => setConfirmReset(false)}>Cancel</button></div>}
-      </div>
-    </div></div>
-  );
+  const [frequency, setFrequency] = useState(data.paydayFrequency || 'fortnightly'); const [nextPaydayDate, setNextPaydayDate] = useState(data.nextPaydayDate || ''); const [accounts, setAccounts] = useState(data.accounts.map((a, i) => ({ ...a, color: a.color || colorAt(i), paydayAmount: String(a.paydayAmount || ''), pools: a.pools.map((p) => ({ ...p, allocation: String(poolAllocation(a, p)), balance: safeNum(p.balance) })), autopayments: (a.autopayments || []).map((ap) => ({ ...ap, amount: String(ap.amount || '') })) }))); const [confirmReset, setConfirmReset] = useState(false);
+  const canSave = frequency && nextPaydayDate && accounts.every((a) => a.name.trim() && safeNum(a.paydayAmount) > 0 && a.pools.length && a.pools.every((p) => p.name.trim() && safeNum(p.allocation) >= 0) && Math.abs(allocationRemaining(a)) < 0.01 && (a.autopayments || []).every((ap) => ap.name.trim() && ap.poolId && safeNum(ap.amount) > 0));
+  const updateAccount = (id, field, value) => setAccounts((as) => as.map((a) => a.id === id ? { ...a, [field]: value } : a)); const addAccount = () => setAccounts((as) => [...as, { id: genId(), name: '', color: colorAt(as.length), paydayAmount: '', pools: [{ id: genId(), name: '', allocation: '', balance: 0 }], autopayments: [] }]); const removeAccount = (id) => setAccounts((as) => as.length > 1 ? as.filter((a) => a.id !== id) : as); const updatePool = (accountId, poolId, field, value) => setAccounts((as) => as.map((a) => a.id !== accountId ? a : { ...a, pools: a.pools.map((p) => p.id === poolId ? { ...p, [field]: value } : p) })); const addPool = (accountId) => setAccounts((as) => as.map((a) => a.id !== accountId ? a : { ...a, pools: [...a.pools, { id: genId(), name: '', allocation: '', balance: 0 }] })); const removePool = (accountId, poolId) => setAccounts((as) => as.map((a) => a.id !== accountId ? a : { ...a, pools: a.pools.length > 1 ? a.pools.filter((p) => p.id !== poolId) : a.pools, autopayments: (a.autopayments || []).filter((ap) => ap.poolId !== poolId) }));
+  const updateAutopayment = (accountId, apId, field, value) => setAccounts((as) => as.map((a) => a.id !== accountId ? a : { ...a, autopayments: (a.autopayments || []).map((ap) => ap.id === apId ? { ...ap, [field]: value } : ap) })); const addAutopayment = (accountId) => setAccounts((as) => as.map((a) => a.id !== accountId ? a : { ...a, autopayments: [...(a.autopayments || []), { id: genId(), name: '', poolId: a.pools[0]?.id || '', amount: '' }] })); const removeAutopayment = (accountId, apId) => setAccounts((as) => as.map((a) => a.id !== accountId ? a : { ...a, autopayments: (a.autopayments || []).filter((ap) => ap.id !== apId) }));
+  const save = () => { if (!canSave) return; onSave({ ...data, paydayFrequency: frequency, nextPaydayDate, accounts: accounts.map((a) => ({ ...a, name: a.name.trim(), paydayAmount: round2(safeNum(a.paydayAmount)), pools: a.pools.map((p) => ({ ...p, name: p.name.trim(), allocation: round2(safeNum(p.allocation)), balance: round2(safeNum(p.balance)) })), autopayments: (a.autopayments || []).map((ap) => ({ ...ap, name: ap.name.trim(), amount: round2(safeNum(ap.amount)) })) })) }); };
+  return <div className="cp-overlay" onClick={onClose}><div className="cp-modal" onClick={(e) => e.stopPropagation()}><div className="cp-modal-head"><h2>Settings</h2><button className="cp-icon-btn-sm" onClick={onClose}><X size={18} /></button></div><label className="cp-label">How often are you paid?</label><FrequencyPicker value={frequency} onChange={setFrequency} /><label className="cp-label">Next payday date</label><input type="date" className="cp-date-input" value={nextPaydayDate} onChange={(e) => setNextPaydayDate(e.target.value)} /><div className="cp-section-title">Accounts & salary allocations</div><div className="cp-editor-list">{accounts.map((a) => <div className="cp-editor-card" key={a.id}><div className="cp-editor-top"><Droplet size={15} style={{ color: a.color }} /><input className="cp-name-input" placeholder="Account name" value={a.name} onChange={(e) => updateAccount(a.id, 'name', e.target.value)} /><div className="cp-money-box"><span>$</span><input type="number" inputMode="decimal" min="0" placeholder="0" value={a.paydayAmount} onChange={(e) => updateAccount(a.id, 'paydayAmount', e.target.value)} /></div><button className="cp-icon-btn-sm" onClick={() => removeAccount(a.id)} aria-label="Remove account"><X size={16} /></button></div><ColorPicker value={a.color} onChange={(c) => updateAccount(a.id, 'color', c)} /></div>)}</div><button className="cp-add-btn" onClick={addAccount}><Plus size={16} /> Add an account</button>{accounts.map((a) => <div key={a.id} className="cp-section-divider"><div className="cp-section-title">{a.name || 'Account'} pools</div><div className="cp-editor-list">{a.pools.map((p, i) => <div className="cp-flat-row" key={p.id}><Droplet size={14} style={{ color: POOL_PALETTE[i % POOL_PALETTE.length] }} /><input className="cp-name-input" placeholder="Pool name" value={p.name} onChange={(e) => updatePool(a.id, p.id, 'name', e.target.value)} /><div className="cp-money-box"><span>$</span><input type="number" inputMode="decimal" min="0" value={p.allocation} onChange={(e) => updatePool(a.id, p.id, 'allocation', e.target.value)} /></div><button className="cp-icon-btn-sm" onClick={() => removePool(a.id, p.id)} aria-label="Remove pool"><X size={16} /></button></div>)}</div><button className="cp-add-btn" onClick={() => addPool(a.id)}><Plus size={16} /> Add a pool</button><RemainingRow account={a} /><AutopaymentEditor account={a} updateAutopayment={updateAutopayment} addAutopayment={addAutopayment} removeAutopayment={removeAutopayment} /></div>)}<button className="cp-primary-btn" disabled={!canSave} onClick={save}>Save changes</button><button className="cp-secondary-btn" onClick={onExport}>Export activity</button><div className="cp-danger-zone">{!confirmReset ? <button className="cp-text-danger" onClick={() => setConfirmReset(true)}>Start over (clears everything)</button> : <div className="cp-confirm-row"><span>Clear all accounts, pools and history?</span><button className="cp-text-danger-confirm" onClick={onReset}>Yes, clear it</button><button className="cp-text-cancel" onClick={() => setConfirmReset(false)}>Cancel</button></div>}</div></div></div>;
 }
-
-function Wave() {
-  return (
-    <svg className="cp-wave" viewBox="0 0 600 80" preserveAspectRatio="none" aria-hidden="true">
-      <path className="cp-wave-back" d="M0,40 C100,80 200,0 300,40 C400,80 500,0 600,40 C700,80 800,0 900,40 L900,80 L0,80 Z" />
-      <path className="cp-wave-front" d="M0,50 C100,20 200,80 300,50 C400,20 500,80 600,50 C700,20 800,80 900,50 L900,80 L0,80 Z" />
-    </svg>
-  );
-}
-
+function Wave() { return <svg className="cp-wave" viewBox="0 0 600 80" preserveAspectRatio="none" aria-hidden="true"><path className="cp-wave-back" d="M0,40 C100,80 200,0 300,40 C400,80 500,0 600,40 C700,80 800,0 900,40 L900,80 L0,80 Z" /><path className="cp-wave-front" d="M0,50 C100,20 200,80 300,50 C400,20 500,80 600,50 C700,20 800,80 900,50 L900,80 L0,80 Z" /></svg>; }
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(<CashflowApp />);
 </script>
